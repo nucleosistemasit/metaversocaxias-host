@@ -1,6 +1,7 @@
 #unity-container.unity-desktop {
     right: 0%;
     top: 0%;
+    left: initial;
     transform: translate(0%, 0%);
 }
 

@@ -6,11 +6,23 @@
     <title>Metaverso Caxias</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
+    <div class="chat-box">
+      <button class="iniciar-host btn btn-primary" onclick="starthost()">Iniciar Conexão</button>
+      <button id="previous-slide" class="btn btn-slide btn-primary"><</button>
+	  	<button id="next-slide" class="btn btn-slide btn-primary">></button>
+      <input id="local-peer-name" placeholder="Digite seu nome..." />
+			<button onclick="connectPeer()">Entrar</button>
+      <div id="chat" style="height: 300px; overflow-y: auto;">			
+		  </div>
+		  <textarea id="message-content" placeholder="Digite sua mensagem..."></textarea>
+		  <button id="send-message">Enviar</button>
+    </div>
     <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=960 height=600></canvas>
+      <canvas id="unity-canvas"></canvas>
       <div id="unity-loading-bar">
         <div id="unity-logo"></div>
         <div id="unity-progress-bar-empty">
@@ -25,10 +37,6 @@
         <div id="unity-fullscreen-button"></div>
         <div id="unity-build-title">Metaverso Caxias</div>
       </div>
-      <!-- <button onclick="startaudio()">Iniciar audio</button> -->
-      <button onclick="starthost()">Iniciar host</button>
-      <button id="previous-slide">Voltar slide</button>
-	  	<button id="next-slide">Avançar slide</button>
     </div>
     <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
     <script>
@@ -68,8 +76,8 @@
           mobileWarning.style.display = "none";
         }, 5000);
       } else {
-        canvas.style.width = "960px";
-        canvas.style.height = "600px";
+        // canvas.style.width = "960px";
+        // canvas.style.height = "600px";
       }
       loadingBar.style.display = "block";
 
@@ -94,8 +102,7 @@
       document.body.appendChild(script);
 
       function starthost() {
-
-          var peer = new Peer("palestrante-nucleo-pedro", {
+          var peer = new Peer("metaversosul-nucleo-1", {
             config: {
                 'iceServers': [
                 {
@@ -119,89 +126,82 @@
                 ]
             }
         });
+
+        var peer_connections = [];
 
         peer.on('connection', function(conn) {
-            conn.on('open', async function(data) {
-                const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-                peer.call(conn.peer, mediaStream);
-                conn.send(slideIndex);                
-            });
+          peer_connections.push(conn);
+					let peerNode = document.createElement('p');
+					peerNode.innerHTML = '<strong>' + conn.metadata.name + '</strong> entrou.';
+					document.getElementById('chat').appendChild(peerNode);
+					document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+          conn.on('open', async function(data) {
+            const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+            peer.call(conn.peer, mediaStream);
+            conn.send({type: 'command', content: slideIndex}); 
+              conn.on('data', function(data) {
+                // Palestrante recebe pacote
+                if (data.type == 'chat') {
+                  let peerNode = document.createElement('p');
+                  peerNode.innerHTML = '<strong>' + conn.metadata.name + '</strong>: ' + data.content;
+                  document.getElementById('chat').appendChild(peerNode);
+                  document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+                }
+                else if (data.type == 'command') {
 
-            const previousButton = document.getElementById("previous-slide");
-            const nextButton = document.getElementById("next-slide");
-
-            previousButton.addEventListener("click", function() {
-              // Host envia "voltar slide"
-              conn.send('previous');
-              gameInstance.SendMessage('ScriptHandler', 'SlideChange', 'previous');
-              if (slideIndex > 0){
-                slideIndex--;
-              }
+                }
+              });               
             });
-            
-            nextButton.addEventListener("click", function() {
-              // Host envia "avançar slide"
-              conn.send('next');
-              gameInstance.SendMessage('ScriptHandler', 'SlideChange', 'next');
-              slideIndex++;
-            })
+        });
+
+        const sendButton = document.getElementById("send-message");
+
+				sendButton.addEventListener("click", function() {
+					// Send message
+					let messageTextarea = document.getElementById('message-content');
+					let messageContent = messageTextarea.value;
+					for (conn of peer_connections) {
+						conn.send({type: 'chat', content: messageContent});
+					}	
+
+					// Print message
+					let peerNode = document.createElement('p');
+					peerNode.innerHTML = '<strong>Palestrante</strong>: ' + messageContent;
+					document.getElementById('chat').appendChild(peerNode);
+					document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+
+					// Clear textarea
+					messageTextarea.value = '';
+				});
+
+				document.getElementById('message-content').addEventListener('keyup', function(e) {
+					if (e.keyCode == 13) {
+						sendButton.click();
+					}
+				});
+        
+        const previousButton = document.getElementById("previous-slide");
+        const nextButton = document.getElementById("next-slide");
+
+        previousButton.addEventListener("click", function() {
+          // Host envia "voltar slide"
+          for (conn of peer_connections) {
+						conn.send({type: 'command', content: 'previous'});
+					}
+          gameInstance.SendMessage('ScriptHandler', 'SlideChange', 'previous');
+          if (slideIndex > 0){
+            slideIndex--;
+          }
         });
         
-      }
-      function startaudio() {
-        let peer = new Peer({
-            config: {
-                'iceServers': [
-                {
-                    url: "stun:openrelay.metered.ca:80"
-                },
-                {
-                    url: "turn:openrelay.metered.ca:80",
-                    username: "openrelayproject",
-                    credential: "openrelayproject"
-                },
-                {
-                    url: "turn:openrelay.metered.ca:443",
-                    username: "openrelayproject",
-                    credential: "openrelayproject"
-                },
-                {
-                    url: "turn:openrelay.metered.ca:443?transport=tcp",
-                    username: "openrelayproject",
-                    credential: "openrelayproject"
-                }
-                ]
-            }
-        });
-        peer.on('open', function(id) {
-          let audioNode = document.createElement('audio');
-          audioNode.controls = 'controls';        
-          document.body.appendChild(audioNode);
-          let destinationId = 'palestrante-nucleo-pedro';
-          let conn = peer.connect(destinationId);
-
-          conn.on('open', function() {
-            conn.on('data', function(data) {
-              // Participante recebe comando (voltar/avançar slide)
-              console.log(data);
-              gameInstance.SendMessage('ScriptHandler', 'SlideChange', data);              
-            });
-          });
-
-          peer.on('call', async function(call) {
-            console.log(call);
-            // Answer the call
-            call.answer(null);
-
-            call.on('stream', function(stream) {
-              console.log(stream);
-              // stream from remote user
-              audioNode.srcObject = stream;
-              audioNode.muted = false;
-              audioNode.play();
-            });
-          });
-        });
+        nextButton.addEventListener("click", function() {
+          // Host envia "avançar slide"
+          for (conn of peer_connections) {
+						conn.send({type: 'command', content: 'next'});
+					}
+          gameInstance.SendMessage('ScriptHandler', 'SlideChange', 'next');
+          slideIndex++;
+        })
       }
       
     </script>

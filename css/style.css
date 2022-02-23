@@ -1,0 +1,56 @@
+#unity-container.unity-desktop {
+    height: 100vh;
+    right: 0%;
+    top: 0%;
+    left: initial;
+    transform: translate(0%, 0%);
+}
+
+#unity-canvas {
+    width: 70vw;
+    height: 100vh;
+    cursor: default;
+}
+
+#unity-footer {
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+    background-color: white;
+}
+
+.chat-box {
+    width: 30vw;
+    position: absolute;
+    height: 100vh;
+}
+
+audio {
+    display: none;
+}
+
+.iniciar-host {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+}
+
+.btn {
+    box-shadow: none !important;
+}
+
+.btn-slide {
+    /* border-radius: 15px; */
+}
+
+#previous-slide {
+    position: absolute;
+    right: 51%;
+    bottom: 50px;
+}
+
+#next-slide {
+    position: absolute;
+    left: 51%;
+    bottom: 50px;
+}
