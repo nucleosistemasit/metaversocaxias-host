@@ -10,16 +10,37 @@
     <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
-    <div class="chat-box">
-      <button class="iniciar-host btn btn-primary" onclick="starthost()">Iniciar Conexão</button>
-      <button id="previous-slide" class="btn btn-slide btn-primary"><</button>
-	  	<button id="next-slide" class="btn btn-slide btn-primary">></button>
-      <input id="local-peer-name" placeholder="Digite seu nome..." />
-			<button onclick="connectPeer()">Entrar</button>
-      <div id="chat" style="height: 300px; overflow-y: auto;">			
+    <div class="chat-box container-fluid">
+      <div class="row dash dash-info-nome">
+        <h1 class="text-center">Metaverso Caxias</h1>
+        <span class="text-center">Palestra Núcleo Sistemas</span>
+      </div>
+      <div class="row dash dash-info">
+        <div class="col-6">
+          <label for="status">Status: </label>
+          <span id="status">_</span>
+        </div>
+        <div class="col-6">
+          <label for="conexoes">Conexões: </label>
+          <span id="conexoes">_</span>
+        </div>
+      </div>
+      <div class="row text-center dash-controlls">
+        <div class="col-12">
+          <button class="iniciar-host btn btn-primary" onclick="starthost()">Iniciar Conexão</button>
+          <button id="previous-slide" class="btn btn-slide btn-primary"><</button>
+          <button id="next-slide" class="btn btn-slide btn-primary">></button>
+          <button id="palestrante-1" class="btn btn-primary">Palestrante 1</button>
+          <button id="palestrante-2" class="btn btn-primary">Palestrante 2</button>
+          <button id="palestrante-3" class="btn btn-primary">Palestrante 3</button>
+          <button id="palestrante-4" class="btn btn-primary">Palestrante 4</button>
+          <button id="stopTalk" class="btn btn-primary">Finalizar Palestra</button>
+        </div>
+      </div>
+      <div id="chat" style="height: 600px; overflow-y: auto;">			
 		  </div>
-		  <textarea id="message-content" placeholder="Digite sua mensagem..."></textarea>
-		  <button id="send-message">Enviar</button>
+		  <textarea id="message-content" class="form-control" placeholder="Digite sua mensagem..."></textarea>
+		  <button id="send-message" class="btn btn-primary">Enviar</button>
     </div>
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas"></canvas>
@@ -201,9 +222,54 @@
 					}
           gameInstance.SendMessage('ScriptHandler', 'SlideChange', 'next');
           slideIndex++;
-        })
-      }
-      
+        });
+
+        const palestrante1 = document.getElementById("palestrante-1");
+        const palestrante2 = document.getElementById("palestrante-2");
+        const palestrante3 = document.getElementById("palestrante-3");
+        const palestrante4 = document.getElementById("palestrante-4");
+        const stopTalk = document.getElementById("stopTalk");
+
+        palestrante1.addEventListener("click", function() {
+          // Host envia "voltar slide"
+          for (conn of peer_connections) {
+						conn.send({type: 'command', content: 0});
+					}
+          gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 0);      
+        });
+
+        palestrante2.addEventListener("click", function() {
+          // Host envia "voltar slide"
+          for (conn of peer_connections) {
+						conn.send({type: 'command', content: 1});
+					}
+          gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 1);      
+        });
+
+        palestrante3.addEventListener("click", function() {
+          // Host envia "voltar slide"
+          for (conn of peer_connections) {
+						conn.send({type: 'command', content: 2});
+					}
+          gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 2);      
+        });
+
+        palestrante4.addEventListener("click", function() {
+          // Host envia "voltar slide"
+          for (conn of peer_connections) {
+						conn.send({type: 'command', content: 3});
+					}
+          gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 3);      
+        });
+
+        stopTalk.addEventListener("click", function() {
+          // Host envia "voltar slide"
+          for (conn of peer_connections) {
+						conn.send({type: 'command', content: -1});
+					}
+          gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', -1);      
+        });
+      }      
     </script>
   </body>
 </html>
