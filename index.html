@@ -166,7 +166,7 @@
           conn.on('open', async function(data) {
             const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
             peer.call(conn.peer, mediaStream);
-            conn.send({type: 'command', content: slideIndex}); 
+            conn.send({type: 'command', content: slideIndex, name: 'slideSet'}); 
               conn.on('data', function(data) {
                 // Palestrante recebe pacote
                 if (data.type == 'chat') {
@@ -243,7 +243,7 @@
         palestrante1.addEventListener("click", function() {
           // Host envia "voltar slide"
           for (conn of peer_connections) {
-						conn.send({type: 'command', content: 0});
+						conn.send({type: 'command', content: 0, name: 'changeHost'});
 					}
           gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 0);      
         });
@@ -251,7 +251,7 @@
         palestrante2.addEventListener("click", function() {
           // Host envia "voltar slide"
           for (conn of peer_connections) {
-						conn.send({type: 'command', content: 1});
+						conn.send({type: 'command', content: 1, name: 'changeHost'});
 					}
           gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 1);      
         });
@@ -259,7 +259,7 @@
         palestrante3.addEventListener("click", function() {
           // Host envia "voltar slide"
           for (conn of peer_connections) {
-						conn.send({type: 'command', content: 2});
+						conn.send({type: 'command', content: 2, name: 'changeHost'});
 					}
           gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 2);      
         });
@@ -267,7 +267,7 @@
         palestrante4.addEventListener("click", function() {
           // Host envia "voltar slide"
           for (conn of peer_connections) {
-						conn.send({type: 'command', content: 3});
+						conn.send({type: 'command', content: 3, name: 'changeHost'});
 					}
           gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 3);      
         });
@@ -275,7 +275,7 @@
         stopTalk.addEventListener("click", function() {
           // Host envia "voltar slide"
           for (conn of peer_connections) {
-						conn.send({type: 'command', content: -1});
+						conn.send({type: 'command', content: -1, name: 'changeHost'});
 					}
           gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', -1);      
         });
