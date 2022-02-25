@@ -166,7 +166,7 @@
           conn.on('open', async function(data) {
             const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
             peer.call(conn.peer, mediaStream);
-            conn.send({type: 'command', content: slideIndex, name: 'slideChange'}); 
+            conn.send({type: 'command', content: slideIndex, name: 'slideSet'}); 
               conn.on('data', function(data) {
                 // Palestrante recebe pacote
                 if (data.type == 'chat') {
