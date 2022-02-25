@@ -8,13 +8,15 @@
     <link rel="stylesheet" href="TemplateData/style.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <link href="css/fontawesome/css/all.min.css" rel="stylesheet">
   </head>
   <body>
     <div class="chat-box container-fluid">
-      <div class="row dash dash-info-nome">
+      <div class="row dash dash-name">
         <h1 class="text-center">Metaverso Caxias</h1>
         <span class="text-center">Palestra Núcleo Sistemas</span>
       </div>
+      <hr/>
       <div class="row dash dash-info">
         <div class="col-6">
           <label for="status">Status: </label>
@@ -25,6 +27,7 @@
           <span id="conexoes">_</span>
         </div>
       </div>
+      <hr/>
       <div class="row text-center dash-controlls">
         <div class="col-12">
           <button class="iniciar-host btn btn-primary" onclick="starthost()">Iniciar Conexão</button>
@@ -37,10 +40,13 @@
           <button id="stopTalk" class="btn btn-primary">Finalizar Palestra</button>
         </div>
       </div>
-      <div id="chat" style="height: 600px; overflow-y: auto;">			
+      <div id="chat" class="row chat" style="height: 450px; overflow-y: auto;">			
 		  </div>
-		  <textarea id="message-content" class="form-control" placeholder="Digite sua mensagem..."></textarea>
-		  <button id="send-message" class="btn btn-primary">Enviar</button>
+      <hr/>
+      <div class="row">
+        <textarea id="message-content" class="form-control msg" placeholder="Mensagem..."></textarea>
+        <button id="send-message" class="btn btn-primary"><i class="fa-solid fa-paper-plane-top"></i></button>
+      </div>
     </div>
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas"></canvas>
@@ -59,7 +65,8 @@
         <div id="unity-build-title">Metaverso Caxias</div>
       </div>
     </div>
-    <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
+    <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script> 
+    <script defer src="js/fontawesome/all.min.js"></script>   
     <script>
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/PALESTRA_METAVERSOCAXIAS_DEV.loader.js";
@@ -167,6 +174,9 @@
                   peerNode.innerHTML = '<strong>' + conn.metadata.name + '</strong>: ' + data.content;
                   document.getElementById('chat').appendChild(peerNode);
                   document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+                  for (peer_connection of peer_connections) {
+                    peer_connection.send({type: 'chat', content: data.content, peer: conn.peer, name: conn.metadata.name});
+                  }	
                 }
                 else if (data.type == 'command') {
 
