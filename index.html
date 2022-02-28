@@ -166,7 +166,7 @@
         peer.on('connection', function(conn) {
           peer_connections.push(conn);
           connectionCount++;
-          document.getElementById('conexoes').innerHTML = connection_count;
+          document.getElementById('conexoes').innerHTML = connectionCount;
           let peerNode = document.createElement('p');
           peerNode.innerHTML = '<strong>' + conn.metadata.name + '</strong> entrou.';
           document.getElementById('chat').appendChild(peerNode);
@@ -195,7 +195,7 @@
 
             conn.on('close', function() {
               connectionCount--;
-              document.getElementById('conexoes').innerHTML = connection_count;
+              document.getElementById('conexoes').innerHTML = connectionCount;
             });
 
           });
