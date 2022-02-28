@@ -19,12 +19,12 @@
       <hr/>
       <div class="row dash dash-info">
         <div class="col-6">
-          <label for="status">Status: </label>
-          <span id="status">_</span>
+          <label for="status"><strong>Status: </strong></label>
+          <span id="status">DESCONECTADO</span>
         </div>
         <div class="col-6">
-          <label for="conexoes">Conexões: </label>
-          <span id="conexoes">_</span>
+          <label for="conexoes"><strong>Conexões: </strong></label>
+          <span id="conexoes">0</span>
         </div>
       </div>
       <hr/>
@@ -41,7 +41,7 @@
         </div>
       </div>
       <div id="chat" class="row chat" style="height: 450px; overflow-y: auto;">			
-		  </div>
+      </div>
       <hr/>
       <div class="row">
         <textarea id="message-content" class="form-control msg" placeholder="Mensagem..."></textarea>
@@ -112,6 +112,8 @@
       var gameInstance = null;
       var script = document.createElement("script");
       var slideIndex = 0;
+      var connectionStatus = "DESCONECTADO";
+      var connectionCount = 0;
       script.src = loaderUrl;
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
@@ -157,59 +159,79 @@
 
         var peer_connections = [];
 
+        peer.on('open', function(id) {
+          document.getElementById("status").innerHTML = "CONECTADO";
+        });
+
         peer.on('connection', function(conn) {
           peer_connections.push(conn);
-					let peerNode = document.createElement('p');
-					peerNode.innerHTML = '<strong>' + conn.metadata.name + '</strong> entrou.';
-					document.getElementById('chat').appendChild(peerNode);
-					document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+          connectionCount++;
+          document.getElementById('conexoes').innerHTML = connection_count;
+          let peerNode = document.createElement('p');
+          peerNode.innerHTML = '<strong>' + conn.metadata.name + '</strong> entrou.';
+          document.getElementById('chat').appendChild(peerNode);
+          document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+
           conn.on('open', async function(data) {
             const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
             peer.call(conn.peer, mediaStream);
             conn.send({type: 'command', content: slideIndex, name: 'slideSet'}); 
-              conn.on('data', function(data) {
-                // Palestrante recebe pacote
-                if (data.type == 'chat') {
-                  let peerNode = document.createElement('p');
-                  peerNode.innerHTML = '<strong>' + conn.metadata.name + '</strong>: ' + data.content;
-                  document.getElementById('chat').appendChild(peerNode);
-                  document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
-                  for (peer_connection of peer_connections) {
-                    peer_connection.send({type: 'chat', content: data.content, peer: conn.peer, name: conn.metadata.name});
-                  }	
-                }
-                else if (data.type == 'command') {
 
+            conn.on('data', function(data) {
+              // Palestrante recebe pacote
+              if (data.type == 'chat') {
+                let peerNode = document.createElement('p');
+                peerNode.innerHTML = '<strong>' + conn.metadata.name + '</strong>: ' + data.content;
+                document.getElementById('chat').appendChild(peerNode);
+                document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+                for (peer_connection of peer_connections) {
+                  peer_connection.send({type: 'chat', content: data.content, peer: conn.peer, name: conn.metadata.name});
                 }
-              });               
+              }
+              else if (data.type == 'command') {
+
+              }
             });
+
+            conn.on('close', function() {
+              connectionCount--;
+              document.getElementById('conexoes').innerHTML = connection_count;
+            });
+
+          });
+        });
+
+        window.addEventListener('beforeunload', function(e) {
+          for (peer_connection of peer_connections) {
+            peer_connection.close();
+          }
         });
 
         const sendButton = document.getElementById("send-message");
 
-				sendButton.addEventListener("click", function() {
-					// Send message
-					let messageTextarea = document.getElementById('message-content');
-					let messageContent = messageTextarea.value;
-					for (conn of peer_connections) {
-						conn.send({type: 'chat', content: messageContent});
-					}	
+        sendButton.addEventListener("click", function() {
+          // Send message
+          let messageTextarea = document.getElementById('message-content');
+          let messageContent = messageTextarea.value;
+          for (conn of peer_connections) {
+            conn.send({type: 'chat', content: messageContent});
+          }
 
-					// Print message
-					let peerNode = document.createElement('p');
-					peerNode.innerHTML = '<strong>Palestrante</strong>: ' + messageContent;
-					document.getElementById('chat').appendChild(peerNode);
-					document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+          // Print message
+          let peerNode = document.createElement('p');
+          peerNode.innerHTML = '<strong>Palestrante</strong>: ' + messageContent;
+          document.getElementById('chat').appendChild(peerNode);
+          document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
 
-					// Clear textarea
-					messageTextarea.value = '';
-				});
+          // Clear textarea
+          messageTextarea.value = '';
+        });
 
-				document.getElementById('message-content').addEventListener('keyup', function(e) {
-					if (e.keyCode == 13) {
-						sendButton.click();
-					}
-				});
+        document.getElementById('message-content').addEventListener('keyup', function(e) {
+          if (e.keyCode == 13) {
+            sendButton.click();
+          }
+        });
         
         const previousButton = document.getElementById("previous-slide");
         const nextButton = document.getElementById("next-slide");
@@ -217,8 +239,8 @@
         previousButton.addEventListener("click", function() {
           // Host envia "voltar slide"
           for (conn of peer_connections) {
-						conn.send({type: 'command', content: 'previous'});
-					}
+            conn.send({type: 'command', content: 'previous'});
+          }
           gameInstance.SendMessage('ScriptHandler', 'SlideChange', 'previous');
           if (slideIndex > 0){
             slideIndex--;
@@ -228,8 +250,8 @@
         nextButton.addEventListener("click", function() {
           // Host envia "avançar slide"
           for (conn of peer_connections) {
-						conn.send({type: 'command', content: 'next'});
-					}
+            conn.send({type: 'command', content: 'next'});
+          }
           gameInstance.SendMessage('ScriptHandler', 'SlideChange', 'next');
           slideIndex++;
         });
@@ -243,40 +265,40 @@
         palestrante1.addEventListener("click", function() {
           // Host envia "voltar slide"
           for (conn of peer_connections) {
-						conn.send({type: 'command', content: 0, name: 'changeHost'});
-					}
+            conn.send({type: 'command', content: 0, name: 'changeHost'});
+          }
           gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 0);      
         });
 
         palestrante2.addEventListener("click", function() {
           // Host envia "voltar slide"
           for (conn of peer_connections) {
-						conn.send({type: 'command', content: 1, name: 'changeHost'});
-					}
+            conn.send({type: 'command', content: 1, name: 'changeHost'});
+          }
           gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 1);      
         });
 
         palestrante3.addEventListener("click", function() {
           // Host envia "voltar slide"
           for (conn of peer_connections) {
-						conn.send({type: 'command', content: 2, name: 'changeHost'});
-					}
+            conn.send({type: 'command', content: 2, name: 'changeHost'});
+          }
           gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 2);      
         });
 
         palestrante4.addEventListener("click", function() {
           // Host envia "voltar slide"
           for (conn of peer_connections) {
-						conn.send({type: 'command', content: 3, name: 'changeHost'});
-					}
+            conn.send({type: 'command', content: 3, name: 'changeHost'});
+          }
           gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 3);      
         });
 
         stopTalk.addEventListener("click", function() {
           // Host envia "voltar slide"
           for (conn of peer_connections) {
-						conn.send({type: 'command', content: -1, name: 'changeHost'});
-					}
+            conn.send({type: 'command', content: -1, name: 'changeHost'});
+          }
           gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', -1);      
         });
       }      
