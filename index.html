@@ -130,6 +130,7 @@
       var gameInstance = null;
       var script = document.createElement("script");
       var slideIndex = 0;
+      var hostIndex = -1;
       var connectionStatus = "DESCONECTADO";
       var connectionCount = 0;
       script.src = loaderUrl;
@@ -149,7 +150,10 @@
 
       document.body.appendChild(script);
 
+      document.getElementById("start-connection").addEventListener("click", starthost);
+
       function starthost() {
+        document.getElementById("start-connection").disabled = true;
           var peer = new Peer("metaversosul-nucleo-1", {
             config: {
                 'iceServers': [
@@ -184,7 +188,7 @@
         peer.on('connection', function(conn) {
           peer_connections.push(conn);
           connectionCount++;
-          document.getElementById('conexoes').innerHTML = connection_count;
+          document.getElementById('conexoes').innerHTML = connectionCount;
           let peerNode = document.createElement('p');
           peerNode.className = "p-entered-chat"
           peerNode.innerHTML = '<strong class="s-entered-chat">' + conn.metadata.name + '</strong> entrou na sala.';
@@ -194,7 +198,8 @@
           conn.on('open', async function(data) {
             const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
             peer.call(conn.peer, mediaStream);
-            conn.send({type: 'command', content: slideIndex, name: 'slideSet'}); 
+            conn.send({type: 'command', content: slideIndex, name: 'slideSet'});
+            conn.send({type: 'command', content: hostIndex, name: 'changeHost'});
 
             conn.on('data', function(data) {
               // Palestrante recebe pacote
@@ -215,7 +220,7 @@
 
             conn.on('close', function() {
               connectionCount--;
-              document.getElementById('conexoes').innerHTML = connection_count;
+              document.getElementById('conexoes').innerHTML = connectionCount;
             });
 
           });
@@ -233,18 +238,21 @@
           // Send message
           let messageTextarea = document.getElementById('message-content');
           let messageContent = messageTextarea.value;
-          for (conn of peer_connections) {
-            conn.send({type: 'chat', content: messageContent});
+
+          if (messageContent != null && messageContent.trim() !== '') {
+            for (conn of peer_connections) {
+              conn.send({type: 'chat', content: messageContent});
+            }
+
+            // Print message
+            let peerNode = document.createElement('p');
+            peerNode.innerHTML = '<strong>Palestrante</strong>: ' + messageContent;
+            document.getElementById('chat').appendChild(peerNode);
+            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+
+            // Clear textarea
+            messageTextarea.value = '';
           }
-
-          // Print message
-          let peerNode = document.createElement('p');
-          peerNode.innerHTML = '<strong>Palestrante</strong>: ' + messageContent;
-          document.getElementById('chat').appendChild(peerNode);
-          document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
-
-          // Clear textarea
-          messageTextarea.value = '';
         });
 
         document.getElementById('message-content').addEventListener('keyup', function(e) {
@@ -283,7 +291,7 @@
         const stopTalk = document.getElementById("stopTalk");
 
         palestrante1.addEventListener("click", function() {
-          // Host envia "voltar slide"
+          hostIndex = 0;
           for (conn of peer_connections) {
             conn.send({type: 'command', content: 0, name: 'changeHost'});
           }
@@ -291,7 +299,7 @@
         });
 
         palestrante2.addEventListener("click", function() {
-          // Host envia "voltar slide"
+          hostIndex = 1;
           for (conn of peer_connections) {
             conn.send({type: 'command', content: 1, name: 'changeHost'});
           }
@@ -299,7 +307,7 @@
         });
 
         palestrante3.addEventListener("click", function() {
-          // Host envia "voltar slide"
+          hostIndex = 2;
           for (conn of peer_connections) {
             conn.send({type: 'command', content: 2, name: 'changeHost'});
           }
@@ -307,7 +315,7 @@
         });
 
         palestrante4.addEventListener("click", function() {
-          // Host envia "voltar slide"
+          hostIndex = 3;
           for (conn of peer_connections) {
             conn.send({type: 'command', content: 3, name: 'changeHost'});
           }
@@ -315,7 +323,7 @@
         });
 
         stopTalk.addEventListener("click", function() {
-          // Host envia "voltar slide"
+          hostIndex = -1;
           for (conn of peer_connections) {
             conn.send({type: 'command', content: -1, name: 'changeHost'});
           }
