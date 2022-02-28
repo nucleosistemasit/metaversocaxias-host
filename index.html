@@ -112,6 +112,7 @@
       var gameInstance = null;
       var script = document.createElement("script");
       var slideIndex = 0;
+      var hostIndex = -1;
       var connectionStatus = "DESCONECTADO";
       var connectionCount = 0;
       script.src = loaderUrl;
@@ -175,7 +176,8 @@
           conn.on('open', async function(data) {
             const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
             peer.call(conn.peer, mediaStream);
-            conn.send({type: 'command', content: slideIndex, name: 'slideSet'}); 
+            conn.send({type: 'command', content: slideIndex, name: 'slideSet'});
+            conn.send({type: 'command', content: hostIndex, name: 'changeHost'});
 
             conn.on('data', function(data) {
               // Palestrante recebe pacote
@@ -263,7 +265,7 @@
         const stopTalk = document.getElementById("stopTalk");
 
         palestrante1.addEventListener("click", function() {
-          // Host envia "voltar slide"
+          hostIndex = 0;
           for (conn of peer_connections) {
             conn.send({type: 'command', content: 0, name: 'changeHost'});
           }
@@ -271,7 +273,7 @@
         });
 
         palestrante2.addEventListener("click", function() {
-          // Host envia "voltar slide"
+          hostIndex = 1;
           for (conn of peer_connections) {
             conn.send({type: 'command', content: 1, name: 'changeHost'});
           }
@@ -279,7 +281,7 @@
         });
 
         palestrante3.addEventListener("click", function() {
-          // Host envia "voltar slide"
+          hostIndex = 2;
           for (conn of peer_connections) {
             conn.send({type: 'command', content: 2, name: 'changeHost'});
           }
@@ -287,7 +289,7 @@
         });
 
         palestrante4.addEventListener("click", function() {
-          // Host envia "voltar slide"
+          hostIndex = 3;
           for (conn of peer_connections) {
             conn.send({type: 'command', content: 3, name: 'changeHost'});
           }
@@ -295,7 +297,7 @@
         });
 
         stopTalk.addEventListener("click", function() {
-          // Host envia "voltar slide"
+          hostIndex = -1;
           for (conn of peer_connections) {
             conn.send({type: 'command', content: -1, name: 'changeHost'});
           }
