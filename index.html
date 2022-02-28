@@ -182,12 +182,14 @@
             conn.on('data', function(data) {
               // Palestrante recebe pacote
               if (data.type == 'chat') {
-                let peerNode = document.createElement('p');
-                peerNode.innerHTML = '<strong>' + conn.metadata.name + '</strong>: ' + data.content;
-                document.getElementById('chat').appendChild(peerNode);
-                document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
-                for (peer_connection of peer_connections) {
-                  peer_connection.send({type: 'chat', content: data.content, peer: conn.peer, name: conn.metadata.name});
+                if (data.content != null && data.content.trim() !== '') {
+                  let peerNode = document.createElement('p');
+                  peerNode.innerHTML = '<strong>' + conn.metadata.name + '</strong>: ' + data.content;
+                  document.getElementById('chat').appendChild(peerNode);
+                  document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+                  for (peer_connection of peer_connections) {
+                    peer_connection.send({type: 'chat', content: data.content, peer: conn.peer, name: conn.metadata.name});
+                  }
                 }
               }
               else if (data.type == 'command') {
@@ -215,18 +217,21 @@
           // Send message
           let messageTextarea = document.getElementById('message-content');
           let messageContent = messageTextarea.value;
-          for (conn of peer_connections) {
-            conn.send({type: 'chat', content: messageContent});
+
+          if (messageContent != null && messageContent.trim() !== '') {
+            for (conn of peer_connections) {
+              conn.send({type: 'chat', content: messageContent});
+            }
+
+            // Print message
+            let peerNode = document.createElement('p');
+            peerNode.innerHTML = '<strong>Palestrante</strong>: ' + messageContent;
+            document.getElementById('chat').appendChild(peerNode);
+            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+
+            // Clear textarea
+            messageTextarea.value = '';
           }
-
-          // Print message
-          let peerNode = document.createElement('p');
-          peerNode.innerHTML = '<strong>Palestrante</strong>: ' + messageContent;
-          document.getElementById('chat').appendChild(peerNode);
-          document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
-
-          // Clear textarea
-          messageTextarea.value = '';
         });
 
         document.getElementById('message-content').addEventListener('keyup', function(e) {
