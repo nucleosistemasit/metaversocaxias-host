@@ -29,23 +29,41 @@
       </div>
       <hr/>
       <div class="row text-center dash-controlls">
-        <div class="col-12">
+        <div class="col-4">
+          <span class="header">Conexão</span>
           <button class="iniciar-host btn btn-primary" onclick="starthost()">Iniciar Conexão</button>
+        </div>
+        <div class="col-4">
+          <span class="header">Slides</span>
           <button id="previous-slide" class="btn btn-slide btn-primary"><</button>
           <button id="next-slide" class="btn btn-slide btn-primary">></button>
-          <button id="palestrante-1" class="btn btn-primary">Palestrante 1</button>
-          <button id="palestrante-2" class="btn btn-primary">Palestrante 2</button>
-          <button id="palestrante-3" class="btn btn-primary">Palestrante 3</button>
-          <button id="palestrante-4" class="btn btn-primary">Palestrante 4</button>
-          <button id="stopTalk" class="btn btn-primary">Finalizar Palestra</button>
         </div>
       </div>
-      <div id="chat" class="row chat" style="height: 450px; overflow-y: auto;">			
+      <hr/>
+      <div class="row text-center dash-controlls">
+        <div class="col-12">
+            <span class="header">Animação</span>
+            <button id="palestrante-1" class="btn btn-primary">Palestrante 1</button>
+            <button id="palestrante-2" class="btn btn-primary">Palestrante 2</button>
+            <button id="palestrante-3" class="btn btn-primary">Palestrante 3</button>
+            <button id="palestrante-4" class="btn btn-primary">Palestrante 4</button>
+            <button id="stopTalk" class="btn btn-primary">Finalizar Palestra</button>
+        </div>        
       </div>
       <hr/>
-      <div class="row">
-        <textarea id="message-content" class="form-control msg" placeholder="Mensagem..."></textarea>
-        <button id="send-message" class="btn btn-primary"><i class="fa-solid fa-paper-plane-top"></i></button>
+      <!-- <div id="chat" class="row chat" style="height: 450px; overflow-y: auto;">	
+        <p><strong>Palestrante</strong>: teste</p>	
+        <p><strong>Palestrante</strong>: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>	
+      </div> -->
+      <div id="chat" class="row chat" style="height: 450px; overflow-y: auto;">			
+        <p class="p-entered-chat"><strong class="s-entered-chat">mpm</strong> entrou.</p>
+        <p class="p-messaged-chat"><strong class="s-messaged-chat">mpm</strong> teste</p>
+        <p class="p-messaged-chat"><strong class="s-messaged-chat">Palestrante</strong> oioi</p>
+        <p class="p-messaged-chat"><strong class="s-messaged-chat">Palestrante</strong> teste</p> 
+      </div>
+      <div class="row msg-box">
+        <textarea id="message-content" class="type-msg col-10" placeholder="Mensagem..."></textarea>
+        <button id="send-message" class="col-2 btn btn-send-msg"><i class="fa-solid fa-paper-plane-top"></i></button>
       </div>
     </div>
     <div id="unity-container" class="unity-desktop">
@@ -168,7 +186,8 @@
           connectionCount++;
           document.getElementById('conexoes').innerHTML = connection_count;
           let peerNode = document.createElement('p');
-          peerNode.innerHTML = '<strong>' + conn.metadata.name + '</strong> entrou.';
+          peerNode.className = "p-entered-chat"
+          peerNode.innerHTML = '<strong class="s-entered-chat">' + conn.metadata.name + '</strong> entrou na sala.';
           document.getElementById('chat').appendChild(peerNode);
           document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
 
@@ -181,7 +200,8 @@
               // Palestrante recebe pacote
               if (data.type == 'chat') {
                 let peerNode = document.createElement('p');
-                peerNode.innerHTML = '<strong>' + conn.metadata.name + '</strong>: ' + data.content;
+                peerNode = className = "p-messaged-chat"
+                peerNode.innerHTML = '<strong class="s-messaged-chat">' + conn.metadata.name + '</strong> ' + data.content;
                 document.getElementById('chat').appendChild(peerNode);
                 document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
                 for (peer_connection of peer_connections) {
