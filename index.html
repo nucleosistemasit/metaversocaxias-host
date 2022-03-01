@@ -31,23 +31,23 @@
       <div class="row text-center dash-controlls">
         <div class="col-4">
           <span class="header">Conexão</span>
-          <button class="iniciar-host btn btn-primary" id="start-connection">Iniciar Conexão</button>
+          <button class="iniciar-host btn btn-primary" id="start-connection" disabled>Iniciar Conexão</button>
         </div>
         <div class="col-4">
           <span class="header">Slides</span>
-          <button id="previous-slide" class="btn btn-slide btn-primary"><</button>
-          <button id="next-slide" class="btn btn-slide btn-primary">></button>
+          <button id="previous-slide" class="btn btn-slide btn-primary" disabled><</button>
+          <button id="next-slide" class="btn btn-slide btn-primary" disabled>></button>
         </div>
       </div>
       <hr/>
       <div class="row text-center dash-controlls">
         <div class="col-12">
             <span class="header">Animação</span>
-            <button id="palestrante-1" class="btn btn-primary">Palestrante 1</button>
-            <button id="palestrante-2" class="btn btn-primary">Palestrante 2</button>
-            <button id="palestrante-3" class="btn btn-primary">Palestrante 3</button>
-            <button id="palestrante-4" class="btn btn-primary">Palestrante 4</button>
-            <button id="stopTalk" class="btn btn-primary">Finalizar Palestra</button>
+            <button id="palestrante-1" class="btn btn-primary" disabled>Palestrante 1</button>
+            <button id="palestrante-2" class="btn btn-primary" disabled>Palestrante 2</button>
+            <button id="palestrante-3" class="btn btn-primary" disabled>Palestrante 3</button>
+            <button id="palestrante-4" class="btn btn-primary" disabled>Palestrante 4</button>
+            <button id="stopTalk" class="btn btn-primary" disabled>Finalizar Palestra</button>
         </div>        
       </div>
       <hr/>
@@ -140,6 +140,14 @@
         }).then((unityInstance) => {
           gameInstance = unityInstance;
           loadingBar.style.display = "none";
+          document.getElementById("start-connection").disabled = false;
+          document.getElementById("previous-slide").disabled = false;
+          document.getElementById("next-slide").disabled = false;
+          document.getElementById("palestrante-1").disabled = false;
+          document.getElementById("palestrante-2").disabled = false;
+          document.getElementById("palestrante-3").disabled = false;
+          document.getElementById("palestrante-4").disabled = false;
+          document.getElementById("stopTalk").disabled = false;
           fullscreenButton.onclick = () => {
             unityInstance.SetFullscreen(1);
           };
