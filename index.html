@@ -138,7 +138,7 @@
       var connectionStatus = "DESCONECTADO";
       var connectionCount = 0;
       var micStatus = true;
-			var mediaStream = null;
+      var mediaStream = null;
       script.src = loaderUrl;
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
@@ -166,6 +166,12 @@
       document.body.appendChild(script);
 
       document.getElementById("start-connection").addEventListener("click", starthost);
+
+      document.getElementById("start-connection").addEventListener("click", async function(e) {
+        if (mediaStream == null) {
+          mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        }
+      });
 
       function starthost() {
         document.getElementById("start-connection").disabled = true;
@@ -210,10 +216,7 @@
           document.getElementById('chat').appendChild(peerNode);
           document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
 
-          conn.on('open', async function(data) {
-            if (mediaStream == null) {
-              mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-            }
+          conn.on('open', function(data) {
             peer.call(conn.peer, mediaStream);
             conn.send({type: 'command', content: slideIndex, name: 'slideSet'});
             conn.send({type: 'command', content: hostIndex, name: 'changeHost'});
