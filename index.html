@@ -38,6 +38,10 @@
           <button id="previous-slide" class="btn btn-slide btn-primary" disabled><</button>
           <button id="next-slide" class="btn btn-slide btn-primary" disabled>></button>
         </div>
+        <div class="col-4">
+          <span class="header">Microfone</span>
+          <button id="toggle-mic" class="btn btn-slide btn-primary" disabled>Desligar microfone</button>
+        </div>
       </div>
       <hr/>
       <div class="row text-center dash-controlls">
@@ -133,6 +137,8 @@
       var hostIndex = -1;
       var connectionStatus = "DESCONECTADO";
       var connectionCount = 0;
+      var micStatus = true;
+			var mediaStream = null;
       script.src = loaderUrl;
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
@@ -143,6 +149,7 @@
           document.getElementById("start-connection").disabled = false;
           document.getElementById("previous-slide").disabled = false;
           document.getElementById("next-slide").disabled = false;
+          document.getElementById("toggle-mic").disabled = false;
           document.getElementById("palestrante-1").disabled = false;
           document.getElementById("palestrante-2").disabled = false;
           document.getElementById("palestrante-3").disabled = false;
@@ -204,7 +211,9 @@
           document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
 
           conn.on('open', async function(data) {
-            const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+            if (mediaStream == null) {
+              mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+            }
             peer.call(conn.peer, mediaStream);
             conn.send({type: 'command', content: slideIndex, name: 'slideSet'});
             conn.send({type: 'command', content: hostIndex, name: 'changeHost'});
@@ -234,6 +243,21 @@
             });
 
           });
+        });
+
+        document.getElementById('toggle-mic').addEventListener("click", function() {
+          if (micStatus == true) {
+            // Disable mic
+            micStatus = false;
+            document.getElementById("toggle-mic").innerHTML = "Ligar microfone";
+            mediaStream.getAudioTracks()[0].enabled = false;
+          }
+          else {
+            // Enable mic
+            micStatus = true;
+            document.getElementById("toggle-mic").innerHTML = "Desligar microfone";
+            mediaStream.getAudioTracks()[0].enabled = true;
+          }
         });
 
         window.addEventListener('beforeunload', function(e) {
