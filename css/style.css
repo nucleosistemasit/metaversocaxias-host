@@ -97,6 +97,18 @@
     top: -3px;
 }
 
+.chat p.p-exited-chat::before {
+    content: "";
+    background-color: rgb(219, 60, 60);
+    border: none;
+    border-radius: 5px;
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    left: -3px;
+    top: -3px;
+}
+
 .chat p.p-messaged-chat {
     margin-top: 35px;
     left: 30px;
@@ -111,6 +123,11 @@
 }
 
 .chat strong.s-entered-chat {
+    position: initial;
+    top: initial;
+}
+
+.chat strong.s-exited-chat {
     position: initial;
     top: initial;
 }

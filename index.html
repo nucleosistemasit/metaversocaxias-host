@@ -249,6 +249,11 @@
             conn.on('close', function() {
               connectionCount--;
               document.getElementById('conexoes').innerHTML = connectionCount;
+              let peerNode = document.createElement('p');
+              peerNode.className = "p-exited-chat";
+              peerNode.innerHTML = '<strong class="s-exited-chat">' + conn.metadata.name + '</strong> saiu da sala.';
+              document.getElementById('chat').appendChild(peerNode);
+              document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
             });
 
           });
