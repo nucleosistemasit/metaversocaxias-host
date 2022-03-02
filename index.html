@@ -274,7 +274,8 @@
 
             // Print message
             let peerNode = document.createElement('p');
-            peerNode.innerHTML = '<strong>Palestrante</strong>: ' + messageContent;
+            peerNode.className = "p-messaged-chat";
+            peerNode.innerHTML = '<strong class="s-messaged-chat">Palestrante</strong> ' + messageContent;
             document.getElementById('chat').appendChild(peerNode);
             document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
 
