@@ -26,36 +26,22 @@
             <label for="conexoes"><strong>Conexões: </strong></label>
             <span id="conexoes">0</span>
           </div>
-        </div>       
-        <div class="row text-center dash-controlls">
-          <div class="col-4">
-            <span class="header">Conexão</span>
-            <button class="iniciar-host btn btn-primary" id="start-connection" disabled>Iniciar Conexão</button>
-          </div>
-          <div class="col-4">
-            <span class="header">Slides</span>
-            <button id="previous-slide" class="btn btn-slide btn-primary" disabled><</button>
-            <button id="next-slide" class="btn btn-slide btn-primary" disabled>></button>
-          </div>
-          <div class="col-4">
-            <span class="header">Microfone</span>
-            <button id="toggle-mic" class="btn btn-slide btn-primary" disabled>Desligar microfone</button>
-          </div>
-        </div>        
-        <div class="row text-center dash-controlls">
-          <div class="col-12">
-              <span class="header">Animação</span>
-              <button id="palestrante-1" class="btn btn-primary" disabled>Palestrante 1</button>
-              <button id="palestrante-2" class="btn btn-primary" disabled>Palestrante 2</button>
-              <button id="palestrante-3" class="btn btn-primary" disabled>Palestrante 3</button>
-              <button id="palestrante-4" class="btn btn-primary" disabled>Palestrante 4</button>
-              <button id="stopTalk" class="btn btn-primary" disabled>Parar Animações</button>
-          </div>        
         </div>
         <hr/>
       </div>
-      <div id="chat" class="row chat">	
-      </div>
+      <div id="chat" class="chat chat-host">	
+                  <p class="p-entered-chat"><strong class="s-entered-chat">Milton</strong> entrou na sala.</p><p class="p-messaged-chat"><strong class="s-messaged-chat">Milton</strong> lolol
+            o</p><p class="p-messaged-chat"><strong class="s-messaged-chat">Milton</strong> l
+            </p><p class="p-messaged-chat"><strong class="s-messaged-chat">Milton</strong> 
+            ol
+            </p><p class="p-messaged-chat"><strong class="s-messaged-chat">Milton</strong> o
+            l</p><p class="p-messaged-chat"><strong class="s-messaged-chat">Milton</strong> o
+            </p><p class="p-messaged-chat"><strong class="s-messaged-chat">Milton</strong> l
+            </p><p class="p-messaged-chat"><strong class="s-messaged-chat">Milton</strong> o
+            l</p><p class="p-messaged-chat"><strong class="s-messaged-chat">Milton</strong> 
+            o</p><p class="p-exited-chat"><strong class="s-exited-chat">Milton</strong> saiu da sala.</p></div>
+      <!-- <div id="chat" class="chat">	
+      </div> -->
       <div class="row msg-box">
         <textarea id="message-content" class="type-msg col-10" placeholder="Mensagem..."></textarea>
         <button id="send-message" class="col-2 btn btn-send-msg">></button>
@@ -73,9 +59,32 @@
         WebGL builds are not supported on mobile devices.
       </div>
       <div id="unity-footer">
-        <div id="unity-webgl-logo"></div>
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">Metaverso Caxias</div>
+        <div class="container-fluid">
+          <div class="row text-center dash-controlls">
+            <div class="col-2">
+              <span class="header">Conexão</span>
+              <button class="iniciar-host btn btn-primary" id="start-connection" disabled>Iniciar Conexão</button>
+            </div>
+            <div class="col-2">
+              <span class="header">Slides</span>
+              <button id="previous-slide" class="btn btn-slide btn-primary" disabled><</button>
+              <button id="next-slide" class="btn btn-slide btn-primary" disabled>></button>
+            </div>
+            <div class="col-2">
+              <span class="header">Microfone</span>
+              <button id="toggle-mic" class="btn btn-slide btn-primary" disabled>Desligar microfone</button>
+            </div>
+            <div class="col-6">
+              <span class="header">Animação</span>
+              <button id="palestrante-1" class="btn btn-primary" disabled>Palestrante 1</button>
+              <button id="palestrante-2" class="btn btn-primary" disabled>Palestrante 2</button>
+              <button id="palestrante-3" class="btn btn-primary" disabled>Palestrante 3</button>
+              <button id="palestrante-4" class="btn btn-primary" disabled>Palestrante 4</button>
+              <!-- <button id="stopTalk" class="btn btn-primary" disabled>Parar Animações</button> -->
+            </div> 
+          </div> 
+        </div>
+        <!-- <div id="unity-webgl-logo"></div> -->
       </div>
     </div>
     <script src="js/peerjs.min.js"></script>
@@ -254,7 +263,7 @@
               document.getElementById('conexoes').innerHTML = connectionCount;
               let peerNode = document.createElement('p');
               peerNode.className = "p-exited-chat";
-              peerNode.innerHTML = '<strong class="s-exited-chat">' + conn.metadata.name + '</strong> saiu da sala.';
+              peerNode.innerHTML = '<strong class="s-exited-chat">' + escapeHtml(conn.metadata.name) + '</strong> saiu da sala.';
               document.getElementById('chat').appendChild(peerNode);
               document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
             });
