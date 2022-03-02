@@ -98,6 +98,7 @@
 .chat p.p-messaged-chat {
     margin-top: 35px;
     left: 30px;
+    WIDTH: 80%;
 }
 
 .chat strong {
