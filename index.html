@@ -11,37 +11,25 @@
     <link href="css/fontawesome/css/all.min.css" rel="stylesheet">
   </head>
   <body>
-    <div class="side-panel container-fluid">
+    <div class="side-panel col-6 container-fluid">
       <div class="dash-container">      
         <div class="row dash dash-name">
-          <h1 class="text-center">Metaverso Caxias</h1>
-          <span class="text-center">Palestra Núcleo Sistemas</span>
+          <div class="banner"></div>
         </div>        
         <div class="row dash dash-info">
-          <div class="col-6">
+          <div class="col-7">
             <label for="status"><strong>Status: </strong></label>
-            <span id="status">DESCONECTADO</span>
+            <span id="status" class="conn-off">DESCONECTADO</span>
           </div>
-          <div class="col-6">
+          <div class="col-5">
             <label for="conexoes"><strong>Conexões: </strong></label>
             <span id="conexoes">0</span>
           </div>
         </div>
         <hr/>
       </div>
-      <div id="chat" class="chat chat-host">	
-                  <p class="p-entered-chat"><strong class="s-entered-chat">Milton</strong> entrou na sala.</p><p class="p-messaged-chat"><strong class="s-messaged-chat">Milton</strong> lolol
-            o</p><p class="p-messaged-chat"><strong class="s-messaged-chat">Milton</strong> l
-            </p><p class="p-messaged-chat"><strong class="s-messaged-chat">Milton</strong> 
-            ol
-            </p><p class="p-messaged-chat"><strong class="s-messaged-chat">Milton</strong> o
-            l</p><p class="p-messaged-chat"><strong class="s-messaged-chat">Milton</strong> o
-            </p><p class="p-messaged-chat"><strong class="s-messaged-chat">Milton</strong> l
-            </p><p class="p-messaged-chat"><strong class="s-messaged-chat">Milton</strong> o
-            l</p><p class="p-messaged-chat"><strong class="s-messaged-chat">Milton</strong> 
-            o</p><p class="p-exited-chat"><strong class="s-exited-chat">Milton</strong> saiu da sala.</p></div>
-      <!-- <div id="chat" class="chat">	
-      </div> -->
+     <div id="chat" class="chat">	
+      </div>
       <div class="row msg-box">
         <textarea id="message-content" class="type-msg col-10" placeholder="Mensagem..."></textarea>
         <button id="send-message" class="col-2 btn btn-send-msg">></button>
@@ -63,24 +51,24 @@
           <div class="row text-center dash-controlls">
             <div class="col-2">
               <span class="header">Conexão</span>
-              <button class="iniciar-host btn btn-primary" id="start-connection" disabled>Iniciar Conexão</button>
+              <button class="iniciar-host btn btn-primary" id="start-connection" disabled>Conectar</button>
             </div>
-            <div class="col-2">
+            <div class="col-3">
               <span class="header">Slides</span>
               <button id="previous-slide" class="btn btn-slide btn-primary" disabled><</button>
               <button id="next-slide" class="btn btn-slide btn-primary" disabled>></button>
             </div>
             <div class="col-2">
               <span class="header">Microfone</span>
-              <button id="toggle-mic" class="btn btn-slide btn-primary" disabled>Desligar microfone</button>
+              <button id="toggle-mic" class="btn mic-on btn-primary" disabled>Ligado</button>
             </div>
-            <div class="col-6">
+            <div class="col-5">
               <span class="header">Animação</span>
-              <button id="palestrante-1" class="btn btn-primary" disabled>Palestrante 1</button>
-              <button id="palestrante-2" class="btn btn-primary" disabled>Palestrante 2</button>
-              <button id="palestrante-3" class="btn btn-primary" disabled>Palestrante 3</button>
-              <button id="palestrante-4" class="btn btn-primary" disabled>Palestrante 4</button>
-              <!-- <button id="stopTalk" class="btn btn-primary" disabled>Parar Animações</button> -->
+              <button id="palestrante-1" class="btn btn-primary" disabled>1</button>
+              <button id="palestrante-2" class="btn btn-primary" disabled>2</button>
+              <button id="palestrante-3" class="btn btn-primary" disabled>3</button>
+              <button id="palestrante-4" class="btn btn-primary" disabled>4</button>
+              <button id="stopTalk" class="btn btn-primary" disabled>Parar</button>
             </div> 
           </div> 
         </div>
@@ -219,6 +207,8 @@
 
         peer.on('open', function(id) {
           document.getElementById("status").innerHTML = "CONECTADO";
+          document.getElementById("status").classList.add('conn-on');
+          document.getElementById("status").classList.remove('conn-off');
         });
 
         peer.on('connection', function(conn) {
@@ -272,13 +262,17 @@
           if (micStatus == true) {
             // Disable mic
             micStatus = false;
-            document.getElementById("toggle-mic").innerHTML = "Ligar microfone";
+            document.getElementById("toggle-mic").innerHTML = "Desligado";
+            document.getElementById("toggle-mic").classList.add('mic-off');
+            document.getElementById("toggle-mic").classList.remove('mic-on');
             mediaStream.getAudioTracks()[0].enabled = false;
           }
           else {
             // Enable mic
             micStatus = true;
-            document.getElementById("toggle-mic").innerHTML = "Desligar microfone";
+            document.getElementById("toggle-mic").innerHTML = "Ligado";
+            document.getElementById("toggle-mic").classList.add('mic-on');
+            document.getElementById("toggle-mic").classList.remove('mic-off');
             mediaStream.getAudioTracks()[0].enabled = true;
           }
         });

@@ -18,23 +18,57 @@
     height: 80px;
     width: 100%;
     bottom: 0px;
-    background-color: white;
+    background-color: #e3e3e3;
 }
 
 .side-panel {
-    width: 30vw;
-    position: absolute;
     height: 100vh;
+    width: 30vw;
+    left: 0;
+    top: 0;
+    position: absolute;
 }
 
 .dash-container {
     max-height: 50%;
 }
 
+.dash-name {
+    margin-bottom: 15px;
+}
+
+.banner {
+    height: 100px;
+    background: url(imgs/banner.png);
+    background-position: center;
+    background-size: auto 100px;
+    background-repeat: no-repeat;
+}
+
+.dash-info #status {
+    margin-left: 5px;
+}
+
 .dash-info {
     background-color: #ffffff;
     border-radius: 5px;
     text-align: center;
+}
+
+.dash-info .conn-on {
+    background-color: #9ddb84;
+    margin-left: 5px;
+    border-radius: 15px;
+    padding: 5px 15px;
+    color: white;
+}
+
+.dash-info .conn-off {
+    background-color: rgb(243 139 139);
+    margin-left: 5px;
+    border-radius: 15px;
+    padding: 5px 15px;
+    color: white;
 }
 
 .dash-controlls,
@@ -44,6 +78,16 @@
 
 .dash-controlls span {
     display: block;
+}
+
+.dash-controlls .mic-on {
+    background-color: #67c741;
+    border: #67c741;
+}
+
+.dash-controlls .mic-off {
+    background-color: rgb(219, 60, 60);
+    border: rgb(219, 60, 60);
 }
 
 .dash-controlls .btn {
