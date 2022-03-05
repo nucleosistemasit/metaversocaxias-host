@@ -79,6 +79,10 @@
     <script src="js/linkify.min.js"></script>
     <script src="js/linkify-html.min.js"></script>
     <script defer src="js/fontawesome/all.min.js"></script>
+    <script src="js/socket.io.js"></script>
+    <script src="js/mediasoupclient.min.js"></script>
+    <script src="js/EventEmitter.min.js"></script>
+    <script src="js/RoomClient.js"></script>
     <script>
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/PALESTRA_METAVERSOCAXIAS_DEV.loader.js";
@@ -129,6 +133,10 @@
       var connectionCount = 0;
       var micStatus = true;
       var mediaStream = null;
+      var audioDeviceId = '';
+      const socket = io.connect('https://tecnicaspedagogicas.com.br:443');
+      var producer = null;
+      var rc = null;
       script.src = loaderUrl;
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
@@ -153,6 +161,22 @@
         });
       };
 
+      socket.request = function request(type, data = {}) {
+        return new Promise((resolve, reject) => {
+          socket.emit(type, data, (data) => {
+            if (data.error) {
+              reject(data.error)
+            } else {
+              resolve(data)
+            }
+          })
+        })
+      }
+
+      function startAudioStream() {
+        setTimeout(function() {rc.produce(RoomClient.mediaType.audio, audioDeviceId);}, 5000);
+      }
+
       var entityMap = {
         '<': '&lt;',
         '>': '&gt;',
@@ -170,14 +194,19 @@
 
       document.getElementById("start-connection").addEventListener("click", starthost);
 
-      document.getElementById("start-connection").addEventListener("click", async function(e) {
+      async function starthost() {
+        document.getElementById("start-connection").disabled = true;
         if (mediaStream == null) {
           mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+          audioDeviceId = mediaStream.getAudioTracks()[0].getSettings().deviceId;
         }
-      });
+        if (rc && rc.isOpen()) {
+          console.log('Already connected to a room');
+        } else {
+          rc = new RoomClient(null, null, null, window.mediasoupClient, socket,
+            "metaversosul-nucleo-1", "metaversosul-nucleo-1-host", startAudioStream);
+        }
 
-      function starthost() {
-        document.getElementById("start-connection").disabled = true;
           var peer = new Peer("metaversosul-nucleo-1", {
             config: {
                 'iceServers': [
@@ -222,7 +251,7 @@
           document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
 
           conn.on('open', function(data) {
-            peer.call(conn.peer, mediaStream);
+            // peer.call(conn.peer, mediaStream);
             conn.send({type: 'command', content: slideIndex, name: 'slideSet'});
             conn.send({type: 'command', content: hostIndex, name: 'changeHost'});
 
@@ -266,6 +295,7 @@
             document.getElementById("toggle-mic").classList.add('mic-off');
             document.getElementById("toggle-mic").classList.remove('mic-on');
             mediaStream.getAudioTracks()[0].enabled = false;
+            rc.closeProducer(RoomClient.mediaType.audio);
           }
           else {
             // Enable mic
@@ -274,6 +304,7 @@
             document.getElementById("toggle-mic").classList.add('mic-on');
             document.getElementById("toggle-mic").classList.remove('mic-off');
             mediaStream.getAudioTracks()[0].enabled = true;
+            rc.produce(RoomClient.mediaType.audio, audioDeviceId);
           }
         });
 
