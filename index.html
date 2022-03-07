@@ -220,6 +220,11 @@
           document.getElementById("status").innerHTML = "CONECTADO";
           document.getElementById("status").classList.add('conn-on');
           document.getElementById("status").classList.remove('conn-off');
+
+          var loopInterval = setInterval(function() {
+            chatSocket.send(JSON.stringify({type: 'command', content: slideIndex, name: 'slideSet'}));
+            chatSocket.send(JSON.stringify({type: 'command', content: hostIndex, name: 'changeHost'}));
+          }, 5000);
         };
 
         chatSocket.onmessage = function(e) {
@@ -260,11 +265,7 @@
 
         chatSocket.onclose = function(e) {
 					console.log('host disconnected');
-				};
-
-        // call on interval
-        // conn.send({type: 'command', content: slideIndex, name: 'slideSet'});
-        // conn.send({type: 'command', content: hostIndex, name: 'changeHost'});
+				};        
 
         document.getElementById('toggle-mic').addEventListener("click", function() {
           if (micStatus == true) {
