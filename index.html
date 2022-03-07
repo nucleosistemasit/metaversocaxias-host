@@ -75,7 +75,8 @@
         <!-- <div id="unity-webgl-logo"></div> -->
       </div>
     </div>
-    <script src="js/peerjs.min.js"></script>
+    <!-- <script src="js/peerjs.min.js"></script> -->
+    <script src="js/reconnecting-websocket.min.js"></script>
     <script src="js/linkify.min.js"></script>
     <script src="js/linkify-html.min.js"></script>
     <script defer src="js/fontawesome/all.min.js"></script>
@@ -207,85 +208,63 @@
             "metaversosul-nucleo-1", "metaversosul-nucleo-1-host", startAudioStream);
         }
 
-          var peer = new Peer("metaversosul-nucleo-1", {
-            config: {
-                'iceServers': [
-                {
-                    url: "stun:openrelay.metered.ca:80"
-                },
-                {
-                    url: "turn:openrelay.metered.ca:80",
-                    username: "openrelayproject",
-                    credential: "openrelayproject"
-                },
-                {
-                    url: "turn:openrelay.metered.ca:443",
-                    username: "openrelayproject",
-                    credential: "openrelayproject"
-                },
-                {
-                    url: "turn:openrelay.metered.ca:443?transport=tcp",
-                    username: "openrelayproject",
-                    credential: "openrelayproject"
-                }
-                ]
-            }
-        });
+        const chatSocket = new ReconnectingWebSocket(
+					'wss://'
+					+ 'crieseuavatar.com.br'
+					+ '/ws/chat/'
+					+ 'metaversosul-nucleo-1'
+					+ '/'
+				);
 
-        var peer_connections = [];
-
-        peer.on('open', function(id) {
+        chatSocket.onopen = function(e) {
           document.getElementById("status").innerHTML = "CONECTADO";
           document.getElementById("status").classList.add('conn-on');
           document.getElementById("status").classList.remove('conn-off');
-        });
+        };
 
-        peer.on('connection', function(conn) {
-          peer_connections.push(conn);
-          connectionCount++;
-          document.getElementById('conexoes').innerHTML = connectionCount;
-          let peerNode = document.createElement('p');
-          peerNode.className = "p-entered-chat";
-          peerNode.innerHTML = '<strong class="s-entered-chat">' + escapeHtml(conn.metadata.name) + '</strong> entrou na sala.';
-          document.getElementById('chat').appendChild(peerNode);
-          document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
-
-          conn.on('open', function(data) {
-            // peer.call(conn.peer, mediaStream);
-            conn.send({type: 'command', content: slideIndex, name: 'slideSet'});
-            conn.send({type: 'command', content: hostIndex, name: 'changeHost'});
-
-            conn.on('data', function(data) {
-              // Palestrante recebe pacote
-              if (data.type == 'chat') {
-                if (data.content != null && data.content.trim() !== '') {
-                  let peerNode = document.createElement('p');
-                  peerNode.className = "p-messaged-chat";
-                  peerNode.innerHTML = '<strong class="s-messaged-chat">' + escapeHtml(conn.metadata.name) + '</strong> ' + linkifyHtml(escapeHtml(data.content), {target: '_blank'});
-                  document.getElementById('chat').appendChild(peerNode);
-                  document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
-                  for (peer_connection of peer_connections) {
-                    peer_connection.send({type: 'chat', content: data.content, peer: conn.peer, name: conn.metadata.name});
-                  }
-                }
-              }
-              else if (data.type == 'command') {
-
-              }
-            });
-
-            conn.on('close', function() {
-              connectionCount--;
-              document.getElementById('conexoes').innerHTML = connectionCount;
+        chatSocket.onmessage = function(e) {
+					const data = JSON.parse(e.data);
+					console.log('data', data);
+					// Palestrante recebe pacote
+					if (data.type == 'chat' && data.name != null) {
+            if (data.content != null && data.content.trim() !== '') {
               let peerNode = document.createElement('p');
-              peerNode.className = "p-exited-chat";
-              peerNode.innerHTML = '<strong class="s-exited-chat">' + escapeHtml(conn.metadata.name) + '</strong> saiu da sala.';
+              peerNode.className = "p-messaged-chat";
+              peerNode.innerHTML = '<strong class="s-messaged-chat">' + escapeHtml(data.name) + '</strong> ' + linkifyHtml(escapeHtml(data.content), {target: '_blank'});
               document.getElementById('chat').appendChild(peerNode);
               document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
-            });
+            } 
+					}
+					else if (data.type == 'command') {
 
-          });
-        });
+					}
+					else if (data.type == 'connection') {
+            connectionCount++;
+            document.getElementById('conexoes').innerHTML = connectionCount;
+            let peerNode = document.createElement('p');
+            peerNode.className = "p-entered-chat";
+            peerNode.innerHTML = '<strong class="s-entered-chat">' + escapeHtml(data.name) + '</strong> entrou na sala.';
+            document.getElementById('chat').appendChild(peerNode);
+            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+					}
+					else if (data.type == 'disconnection') {
+            connectionCount--;
+            document.getElementById('conexoes').innerHTML = connectionCount;
+            let peerNode = document.createElement('p');
+            peerNode.className = "p-exited-chat";
+            peerNode.innerHTML = '<strong class="s-exited-chat">' + escapeHtml(data.name) + '</strong> saiu da sala.';
+            document.getElementById('chat').appendChild(peerNode);
+            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+					}
+				};
+
+        chatSocket.onclose = function(e) {
+					console.log('host disconnected');
+				};
+
+        // call on interval
+        // conn.send({type: 'command', content: slideIndex, name: 'slideSet'});
+        // conn.send({type: 'command', content: hostIndex, name: 'changeHost'});
 
         document.getElementById('toggle-mic').addEventListener("click", function() {
           if (micStatus == true) {
@@ -308,12 +287,6 @@
           }
         });
 
-        window.addEventListener('beforeunload', function(e) {
-          for (peer_connection of peer_connections) {
-            peer_connection.close();
-          }
-        });
-
         const sendButton = document.getElementById("send-message");
 
         sendButton.addEventListener("click", function() {
@@ -322,9 +295,7 @@
           let messageContent = messageTextarea.value;
 
           if (messageContent != null && messageContent.trim() !== '') {
-            for (conn of peer_connections) {
-              conn.send({type: 'chat', content: messageContent});
-            }
+            chatSocket.send(JSON.stringify({type: 'chat', content: messageContent}));
 
             // Print message
             let peerNode = document.createElement('p');
@@ -349,9 +320,7 @@
 
         previousButton.addEventListener("click", function() {
           // Host envia "voltar slide"
-          for (conn of peer_connections) {
-            conn.send({type: 'command', content: 'previous'});
-          }
+          chatSocket.send(JSON.stringify({type: 'command', content: 'previous'}));
           gameInstance.SendMessage('ScriptHandler', 'SlideChange', 'previous');
           if (slideIndex > 0){
             slideIndex--;
@@ -360,9 +329,7 @@
         
         nextButton.addEventListener("click", function() {
           // Host envia "avançar slide"
-          for (conn of peer_connections) {
-            conn.send({type: 'command', content: 'next'});
-          }
+          chatSocket.send(JSON.stringify({type: 'command', content: 'next'}));
           gameInstance.SendMessage('ScriptHandler', 'SlideChange', 'next');
           slideIndex++;
         });
@@ -375,41 +342,31 @@
 
         palestrante1.addEventListener("click", function() {
           hostIndex = 0;
-          for (conn of peer_connections) {
-            conn.send({type: 'command', content: 0, name: 'changeHost'});
-          }
+          chatSocket.send(JSON.stringify({type: 'command', content: 0, name: 'changeHost'}));
           gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 0);      
         });
 
         palestrante2.addEventListener("click", function() {
           hostIndex = 1;
-          for (conn of peer_connections) {
-            conn.send({type: 'command', content: 1, name: 'changeHost'});
-          }
+          chatSocket.send(JSON.stringify({type: 'command', content: 1, name: 'changeHost'}));
           gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 1);      
         });
 
         palestrante3.addEventListener("click", function() {
           hostIndex = 2;
-          for (conn of peer_connections) {
-            conn.send({type: 'command', content: 2, name: 'changeHost'});
-          }
+          chatSocket.send(JSON.stringify({type: 'command', content: 2, name: 'changeHost'}));
           gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 2);      
         });
 
         palestrante4.addEventListener("click", function() {
           hostIndex = 3;
-          for (conn of peer_connections) {
-            conn.send({type: 'command', content: 3, name: 'changeHost'});
-          }
+          chatSocket.send(JSON.stringify({type: 'command', content: 3, name: 'changeHost'}));
           gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 3);      
         });
 
         stopTalk.addEventListener("click", function() {
           hostIndex = -1;
-          for (conn of peer_connections) {
-            conn.send({type: 'command', content: -1, name: 'changeHost'});
-          }
+          chatSocket.send(JSON.stringify({type: 'command', content: -1, name: 'changeHost'}));
           gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', -1);      
         });
       }      
