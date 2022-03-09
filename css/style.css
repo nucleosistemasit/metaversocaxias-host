@@ -96,7 +96,7 @@
 
 .chat.chat-host {
     display: inline-block;
-    height: calc(100% - 252px);
+    height: calc(100% - 227px);
     width: calc(100% + 12px);
     padding-bottom: 30px;
     overflow-y: auto;
