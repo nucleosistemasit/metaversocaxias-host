@@ -1,17 +1,376 @@
-<html>
-    <head>
-        <link rel="stylesheet" href="login.css">
-    </head>
-    <title>Login</title>
-    <body>
-        <canvas id="canvas"></canvas>
-        <div class="center">
-            <p>Faça seu Login</p>
-            <input class="input-login" type="email" placeholder="Email">
-            <input class="input-login" type="password" placeholder="Senha">
-            <button>Entrar</button>
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Metaverso Senior</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="css/fontawesome/css/all.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="side-panel col-6 container-fluid">
+      <div class="dash-container">      
+        <div class="row dash dash-name">
+          <div class="banner"></div>
+        </div>        
+        <div class="row dash dash-info">
+          <div class="col-7">
+            <label for="status"><strong>Status: </strong></label>
+            <span id="status" class="conn-off">DESCONECTADO</span>
+          </div>
+          <div class="col-5">
+            <label for="conexoes"><strong>Conexões: </strong></label>
+            <span id="conexoes">0</span>
+          </div>
         </div>
-        <script type="text/javascript" src="main.js" ></script>
-    </body>
-    <footer></footer>
+        <hr/>
+      </div>
+     <div id="chat" class="chat chat-host">	
+      </div>
+      <div class="row msg-box">
+        <textarea id="message-content" class="type-msg col-10" placeholder="Mensagem..."></textarea>
+        <button id="send-message" class="col-2 btn btn-send-msg">></button>
+      </div>
+    </div>
+    <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+      <div id="unity-mobile-warning">
+        WebGL builds are not supported on mobile devices.
+      </div>
+      <div id="unity-footer">
+        <div class="container-fluid">
+          <div class="row text-center dash-controlls">
+            <div class="col-2">
+              <span class="header">Conexão</span>
+              <button class="iniciar-host btn btn-primary" id="start-connection" disabled>Conectar</button>
+            </div>
+            <div class="col-3">
+              <span class="header">Slides</span>
+              <button id="previous-slide" class="btn btn-slide btn-primary" disabled><</button>
+              <button id="next-slide" class="btn btn-slide btn-primary" disabled>></button>
+            </div>
+            <div class="col-2">
+              <span class="header">Microfone</span>
+              <button id="toggle-mic" class="btn mic-on btn-primary" disabled>Ligado</button>
+            </div>
+            <div class="col-5">
+              <span class="header">Animação</span>
+              <button id="palestrante-1" class="btn btn-primary" disabled>1</button>
+              <button id="palestrante-2" class="btn btn-primary" disabled>2</button>
+              <button id="palestrante-3" class="btn btn-primary" disabled>3</button>
+              <button id="palestrante-4" class="btn btn-primary" disabled>4</button>
+              <button id="stopTalk" class="btn btn-primary" disabled>Parar</button>
+            </div> 
+          </div> 
+        </div>
+        <!-- <div id="unity-webgl-logo"></div> -->
+      </div>
+    </div>
+    <!-- <script src="js/peerjs.min.js"></script> -->
+    <script src="js/reconnecting-websocket.min.js"></script>
+    <script src="js/linkify.min.js"></script>
+    <script src="js/linkify-html.min.js"></script>
+    <script defer src="js/fontawesome/all.min.js"></script>
+    <script src="js/socket.io.js"></script>
+    <script src="js/mediasoupclient.min.js"></script>
+    <script src="js/EventEmitter.min.js"></script>
+    <script src="js/RoomClient.js"></script>
+    <script>
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/PALESTRA_METAVERSOCAXIAS_DEV.loader.js";
+      var config = {
+        dataUrl: buildUrl + "/PALESTRA_METAVERSOCAXIAS_DEV.data",
+        frameworkUrl: buildUrl + "/PALESTRA_METAVERSOCAXIAS_DEV.framework.js",
+        codeUrl: buildUrl + "/PALESTRA_METAVERSOCAXIAS_DEV.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "Núcleo",
+        productName: "Metaverso Caxias",
+        productVersion: "0.1",
+      };
+
+      var container = document.querySelector("#unity-container");
+      var canvas = document.querySelector("#unity-canvas");
+      var loadingBar = document.querySelector("#unity-loading-bar");
+      var progressBarFull = document.querySelector("#unity-progress-bar-full");
+      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+      var mobileWarning = document.querySelector("#unity-mobile-warning");
+
+      // By default Unity keeps WebGL canvas render target size matched with
+      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+      // Set this to false if you want to decouple this synchronization from
+      // happening inside the engine, and you would instead like to size up
+      // the canvas DOM size and WebGL render target sizes yourself.
+      // config.matchWebGLToCanvasSize = false;
+
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        container.className = "unity-mobile";
+        // Avoid draining fillrate performance on mobile devices,
+        // and default/override low DPI mode on mobile browsers.
+        config.devicePixelRatio = 1;
+        mobileWarning.style.display = "block";
+        setTimeout(() => {
+          mobileWarning.style.display = "none";
+        }, 5000);
+      } else {
+        // canvas.style.width = "960px";
+        // canvas.style.height = "600px";
+      }
+      loadingBar.style.display = "block";
+
+      var gameInstance = null;
+      var script = document.createElement("script");
+      var slideIndex = 0;
+      var hostIndex = -1;
+      var connectionStatus = "DESCONECTADO";
+      var connectionCount = 0;
+      var micStatus = true;
+      var mediaStream = null;
+      var audioDeviceId = '';
+      const socket = io.connect('https://tecnicaspedagogicas.com.br:443');
+      var producer = null;
+      var rc = null;
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          progressBarFull.style.width = 100 * progress + "%";
+        }).then((unityInstance) => {
+          gameInstance = unityInstance;
+          loadingBar.style.display = "none";
+          document.getElementById("start-connection").disabled = false;
+          document.getElementById("previous-slide").disabled = false;
+          document.getElementById("next-slide").disabled = false;
+          document.getElementById("toggle-mic").disabled = false;
+          document.getElementById("palestrante-1").disabled = false;
+          document.getElementById("palestrante-2").disabled = false;
+          document.getElementById("palestrante-3").disabled = false;
+          document.getElementById("palestrante-4").disabled = false;
+          document.getElementById("stopTalk").disabled = false;
+//           fullscreenButton.onclick = () => {
+//             unityInstance.SetFullscreen(1);
+//           };
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+
+      socket.request = function request(type, data = {}) {
+        return new Promise((resolve, reject) => {
+          socket.emit(type, data, (data) => {
+            if (data.error) {
+              reject(data.error)
+            } else {
+              resolve(data)
+            }
+          })
+        })
+      }
+
+      function startAudioStream() {
+        setTimeout(function() {rc.produce(RoomClient.mediaType.audio, audioDeviceId);}, 5000);
+      }
+
+      var entityMap = {
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+        '`': '&#x60;'
+      };
+      function escapeHtml(string) {
+        return String(string).replace(/[<>"'`]/g, function(s) {
+          return entityMap[s];
+        });
+      }
+
+      document.body.appendChild(script);
+
+      document.getElementById("start-connection").addEventListener("click", starthost);
+
+      async function starthost() {
+        document.getElementById("start-connection").disabled = true;
+        if (mediaStream == null) {
+          mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+          audioDeviceId = mediaStream.getAudioTracks()[0].getSettings().deviceId;
+        }
+        if (rc && rc.isOpen()) {
+          console.log('Already connected to a room');
+        } else {
+          rc = new RoomClient(null, null, null, window.mediasoupClient, socket,
+            "metaversosul-nucleo-1", "metaversosul-nucleo-1-host", startAudioStream);
+        }
+
+        const chatSocket = new ReconnectingWebSocket(
+					'wss://'
+					+ 'crieseuavatar.com.br'
+					+ '/ws/chat/'
+					+ 'metaversosul-nucleo-1'
+					+ '/'
+				);
+
+        chatSocket.onopen = function(e) {
+          document.getElementById("status").innerHTML = "CONECTADO";
+          document.getElementById("status").classList.add('conn-on');
+          document.getElementById("status").classList.remove('conn-off');
+
+          var loopInterval = setInterval(function() {
+            chatSocket.send(JSON.stringify({type: 'command', content: slideIndex, name: 'slideSet'}));
+            chatSocket.send(JSON.stringify({type: 'command', content: hostIndex, name: 'changeHost'}));
+          }, 5000);
+        };
+
+        chatSocket.onmessage = function(e) {
+					const data = JSON.parse(e.data);
+					console.log('data', data);
+					// Palestrante recebe pacote
+					if (data.type == 'chat' && data.name != null) {
+            if (data.content != null && data.content.trim() !== '') {
+              let peerNode = document.createElement('p');
+              peerNode.className = "p-messaged-chat";
+              peerNode.innerHTML = '<strong class="s-messaged-chat">' + escapeHtml(data.name) + '</strong> ' + linkifyHtml(escapeHtml(data.content), {target: '_blank'});
+              document.getElementById('chat').appendChild(peerNode);
+              document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+            } 
+					}
+					else if (data.type == 'command') {
+
+					}
+					else if (data.type == 'connection') {
+            connectionCount++;
+            document.getElementById('conexoes').innerHTML = connectionCount;
+            let peerNode = document.createElement('p');
+            peerNode.className = "p-entered-chat";
+            peerNode.innerHTML = '<strong class="s-entered-chat">' + escapeHtml(data.name) + '</strong> entrou na sala.';
+            document.getElementById('chat').appendChild(peerNode);
+            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+					}
+					else if (data.type == 'disconnection') {
+            connectionCount--;
+            document.getElementById('conexoes').innerHTML = connectionCount;
+            let peerNode = document.createElement('p');
+            peerNode.className = "p-exited-chat";
+            peerNode.innerHTML = '<strong class="s-exited-chat">' + escapeHtml(data.name) + '</strong> saiu da sala.';
+            document.getElementById('chat').appendChild(peerNode);
+            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+					}
+				};
+
+        chatSocket.onclose = function(e) {
+					console.log('host disconnected');
+				};        
+
+        document.getElementById('toggle-mic').addEventListener("click", function() {
+          if (micStatus == true) {
+            // Disable mic
+            micStatus = false;
+            document.getElementById("toggle-mic").innerHTML = "Desligado";
+            document.getElementById("toggle-mic").classList.add('mic-off');
+            document.getElementById("toggle-mic").classList.remove('mic-on');
+            mediaStream.getAudioTracks()[0].enabled = false;
+            rc.closeProducer(RoomClient.mediaType.audio);
+          }
+          else {
+            // Enable mic
+            micStatus = true;
+            document.getElementById("toggle-mic").innerHTML = "Ligado";
+            document.getElementById("toggle-mic").classList.add('mic-on');
+            document.getElementById("toggle-mic").classList.remove('mic-off');
+            mediaStream.getAudioTracks()[0].enabled = true;
+            rc.produce(RoomClient.mediaType.audio, audioDeviceId);
+          }
+        });
+
+        const sendButton = document.getElementById("send-message");
+
+        sendButton.addEventListener("click", function() {
+          // Send message
+          let messageTextarea = document.getElementById('message-content');
+          let messageContent = messageTextarea.value;
+
+          if (messageContent != null && messageContent.trim() !== '') {
+            chatSocket.send(JSON.stringify({type: 'chat', content: messageContent}));
+
+            // Print message
+            let peerNode = document.createElement('p');
+            peerNode.className = "p-messaged-chat";
+            peerNode.innerHTML = '<strong class="s-messaged-chat">Palestrante</strong> ' + linkifyHtml(escapeHtml(messageContent), {target: '_blank'});
+            document.getElementById('chat').appendChild(peerNode);
+            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+
+            // Clear textarea
+            messageTextarea.value = '';
+          }
+        });
+
+        document.getElementById('message-content').addEventListener('keyup', function(e) {
+          if (e.keyCode == 13) {
+            sendButton.click();
+          }
+        });
+        
+        const previousButton = document.getElementById("previous-slide");
+        const nextButton = document.getElementById("next-slide");
+
+        previousButton.addEventListener("click", function() {
+          // Host envia "voltar slide"
+          chatSocket.send(JSON.stringify({type: 'command', content: 'previous'}));
+          gameInstance.SendMessage('ScriptHandler', 'SlideChange', 'previous');
+          if (slideIndex > 0){
+            slideIndex--;
+          }
+        });
+        
+        nextButton.addEventListener("click", function() {
+          // Host envia "avançar slide"
+          chatSocket.send(JSON.stringify({type: 'command', content: 'next'}));
+          gameInstance.SendMessage('ScriptHandler', 'SlideChange', 'next');
+          slideIndex++;
+        });
+
+        const palestrante1 = document.getElementById("palestrante-1");
+        const palestrante2 = document.getElementById("palestrante-2");
+        const palestrante3 = document.getElementById("palestrante-3");
+        const palestrante4 = document.getElementById("palestrante-4");
+        const stopTalk = document.getElementById("stopTalk");
+
+        palestrante1.addEventListener("click", function() {
+          hostIndex = 0;
+          chatSocket.send(JSON.stringify({type: 'command', content: 0, name: 'changeHost'}));
+          gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 0);      
+        });
+
+        palestrante2.addEventListener("click", function() {
+          hostIndex = 1;
+          chatSocket.send(JSON.stringify({type: 'command', content: 1, name: 'changeHost'}));
+          gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 1);      
+        });
+
+        palestrante3.addEventListener("click", function() {
+          hostIndex = 2;
+          chatSocket.send(JSON.stringify({type: 'command', content: 2, name: 'changeHost'}));
+          gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 2);      
+        });
+
+        palestrante4.addEventListener("click", function() {
+          hostIndex = 3;
+          chatSocket.send(JSON.stringify({type: 'command', content: 3, name: 'changeHost'}));
+          gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 3);      
+        });
+
+        stopTalk.addEventListener("click", function() {
+          hostIndex = -1;
+          chatSocket.send(JSON.stringify({type: 'command', content: -1, name: 'changeHost'}));
+          gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', -1);      
+        });
+      }      
+    </script>
+  </body>
 </html>
