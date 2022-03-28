@@ -109,11 +109,22 @@ document.body.appendChild(script);
 
 document.getElementById("start-connection").addEventListener("click", starthost);
 
-var selectedMessageId = null;
 function sendReply(element) {
+    let reply_preview = document.getElementById("replyPreview");
+    let reply_chat = document.getElementById("replyChat");
+    let reply_s_chat = document.getElementById("sReplyChat");
+
     let id = element.closest('.msg-container').dataset.id;
+    let content = element.closest('.p-messaged-chat').textContent;
+    let name = element.closest('.p-messaged-chat').querySelector('.s-messaged-chat').textContent;
+
+    reply_preview.classList.remove("reply-off");
+    reply_chat.innerHTML = content;
+    reply_s_chat.innerHTML = name;
     console.log(id);
-    selectedMessageId = id;
+    console.log(content);
+    console.log(name);
+    reply_preview.dataset.id = id;
 }
 
 async function starthost() {
@@ -144,6 +155,12 @@ async function starthost() {
         chatSocket.send(JSON.stringify({type: 'command', content: hostIndex, name: 'changeHost'}));
         }, 5000);
     };
+
+    function closeReply() {
+        // TODO: limpar o conteúdo do preview de reply e minimizar
+        document.getElementById("replyPreview").dataset.id = "";
+        document.getElementById("replyPreview").classList.add("reply-off");
+    }
     
     function printMessage (data, messageBlock) {
         if (data.content != null && data.content.trim() !== '') {
@@ -205,6 +222,7 @@ async function starthost() {
                                     '</p>' +
                                   '</span>';
             messageBlock.appendChild(peerNode);
+
             document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
         }
     }
@@ -281,8 +299,8 @@ async function starthost() {
 
         if (messageContent != null && messageContent.trim() !== '') {
             let messageData = {"command": "chat", "content": messageContent};
-            if (selectedMessageId != null) {
-                messageData.reply_to = selectedMessageId;
+            if (document.getElementById("replyPreview").dataset.id != "") {
+                messageData.reply_to = document.getElementById("replyPreview").dataset.id;
             }
             chatSocket.send(JSON.stringify(messageData));
 
@@ -295,7 +313,7 @@ async function starthost() {
 
             // Clear textarea
             messageTextarea.value = '';
-            selectedMessageId = null;
+            closeReply();
         }            
     });
 

@@ -1,49 +1,53 @@
+//
+/* Minimiza o painel do chat horizontalmente */
+//
+
 function toggleChat () {
 
-    var chat = document.getElementById("sidePanel");
-    var unityContainer = document.getElementById("unity-container");
-    var unityCanvas = document.getElementById("unity-canvas");
+  var chat = document.getElementById("sidePanel");
+  var unityContainer = document.getElementById("unity-container");
+  var unityCanvas = document.getElementById("unity-canvas");
 
-    chat.classList.toggle("side-panel-closed"); 
-    unityContainer.classList.toggle("unity-fullscreen"); 
-    unityCanvas.classList.toggle("unity-fullscreen"); 
+  chat.classList.toggle("side-panel-closed"); 
+  unityContainer.classList.toggle("unity-fullscreen"); 
+  unityCanvas.classList.toggle("unity-fullscreen"); 
 }
 
 //
-/* Scroll até o fim do chat */
+/* Botão de scroll até o fim do chat */
 //
 
 var scrollToTopBtn = document.getElementById("scrollToBottomBtn");
-var chatWindow = document.getElementById("chat");
+var chatDiv = document.getElementById("chat");
+var scrollPosition = chatDiv.scrollTop;
+var maxY = chatDiv.scrollHeight;
 
 function scrollToBottom() {
 
-  var maxY = chatWindow.scrollHeight;
+maxY = chatDiv.scrollHeight;
 
-  chatWindow.scrollTo({
-    top: maxY,
-    behavior: "smooth"
-  });
+chatDiv.scrollTo({
+  top: maxY,
+  behavior: "smooth"
+});  
 }
 
 scrollToTopBtn.addEventListener("click", scrollToBottom);
 
-scrollToTopBtn.addEventListener("click", scrollToBottom);
+//
+/* Esconde o botão quando já estiver no final do chat*/
+//
 
-var hoverElement = document.elementFromPoint(x, y) ;
-var reactionMenu = document.getElementById("reactionMenu");
-var msgMenu = '<div id="messageMenu" class="msg-menu">' +
-            '<span id="reactionMenu" class="menu-reactions">' +
-              '<span class="reaction" onclick="toggleReaction()">👍</span>' +
-              '<span class="reaction" onclick="toggleReaction()">👏</span>' +
-              '<span class="reaction" onclick="toggleReaction()">❤</span>' +
-              '<span class="reaction" onclick="toggleReaction()">🙌</span>' +
-              '<span class="reaction" onclick="toggleReaction()">😮</span>' +
-              '<span class="reaction" onclick="toggleReaction()">😥</span>' +
-              '<span class="reaction" onclick="toggleReaction()">🤣</span>' +
-            '</span>' +
-            '<span id="replyMenu" class="menu-reply"></span>' +       
-          '</div>';
+chatDiv.onscroll = function() {scrollCheck()}
+  
+function scrollCheck () { 
 
-myDiv.onmouseout  = doSth;
-myDiv.onmouseover = doSthElse;
+maxY = chatDiv.scrollHeight;
+scrollPosition = chatDiv.scrollTop;
+
+if (scrollPosition > (maxY/1.5)){
+    scrollToTopBtn.classList.add("btn-off"); 
+  } else {
+    scrollToTopBtn.classList.remove("btn-off"); 
+  }
+};

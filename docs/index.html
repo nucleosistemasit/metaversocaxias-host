@@ -23,67 +23,16 @@
           <span id="conexoes">0</span>
         </div>
       </div>
-      <!-- <div class="row dash dash-info">
-        <div class="col-7">
-          <label for="status"><strong>Status: </strong></label>
-          <span id="status" class="conn-off">DESCONECTADO</span>
-        </div>
-        <div class="col-5">
-          <label for="conexoes"><strong>Conexões: </strong></label>
-          <span id="conexoes">0</span>
-        </div>
-      </div> -->
       <div id="chat" class="row chat chat-client">	
-        <!-- <div class="msg-container">
-          <p class="p-messaged-chat"><strong class="s-messaged-chat">Milton</strong> Ola, tudo bem? Queria saber o que você acho do front dessa pagina legal do chat que eu fiz para a palestra do evento da Senior X Store
-            <span class="msg-reactions">
-              <span class="reaction">👍 5</span>
-              <span class="reaction">👏 6</span>
-              <span class="reaction">❤ 1</span>
-              <span class="reaction">🙌 1</span>
-              <span class="reaction">😮 1</span>
-              <span class="reaction">😥 1</span>
-              <span class="reaction">🤣 1</span>
-            </span>  
-            <span id="messageMenu" class="msg-menu">
-              <span id="replyMenu" class="menu-reply" onClick="">⬅</span>        
-              <span id="reactionMenu" class="menu-reactions">
-                <span class="reaction" onclick="toggleReaction()">👍</span>
-                <span class="reaction" onclick="toggleReaction()">👏</span>
-                <span class="reaction" onclick="toggleReaction()">❤</span>
-                <span class="reaction" onclick="toggleReaction()">🙌</span>
-                <span class="reaction" onclick="toggleReaction()">😮</span>
-                <span class="reaction" onclick="toggleReaction()">😥</span>
-                <span class="reaction" onclick="toggleReaction()">🤣</span>
-              </span> 
-            </span>                   
-          </p>
-        </div> -->
-        <!-- <div class="msg-container">
-          <p class="p-messaged-chat">
-            <strong class="s-messaged-chat">Juliano</strong>
-            Opa
-          </p>
-        </div> -->
-        <!-- <div class="msg-container">
-          <p class="p-messaged-chat">
-            <strong class="s-messaged-chat">Juliano</strong>
-            <span class="reply-chat">
-              <strong class="s-reply-chat">Milton</strong>
-              Ola, tudo bem? Queria saber o que você acho do front dessa pagina legal do chat que eu fiz para a palestra do evento da Senior X Store
-            </span> 
-            Não pq o CSS ainda ta +-          
-          </p>
-        </div> -->
-        <!-- <div class="msg-container">
-          <p class="p-messaged-chat"><strong class="s-messaged-chat">Washington Machado</strong> Beleza</p> 
-        </div> -->
-        <!-- <div class="msg-container mod-msg">
-          <p class="p-messaged-chat"><strong class="s-messaged-chat">Pedro</strong>Bora terminar o CSS então!</p> 
-        </div>  -->
-        <span id="scrollToBottomBtn"><i class="fas fa-caret-down scroll-down-btn"></i></span>
+        <span><i id="scrollToBottomBtn" class="fas fa-caret-down"></i></span>
       </div>
       <div class="row msg-box">
+        <div id="replyPreview" class="reply-preview reply-off" data-id="">
+          <span id="replyChat" class="reply-chat">
+            <strong id="sReplyChat" class="s-reply-chat">Milton<span><i class="fas fa-close reply-close" onclick="replyToggle()"></i></span></strong>
+            Ola, tudo bem? Queria saber o que você acho do front dessa pagina legal do chat que eu fiz para a palestra do evento da Senior X Store
+          </span>
+        </div>
         <textarea id="message-content" class="type-msg col-10" placeholder="Mensagem..."></textarea>
         <button id="send-message" class="col-2 btn btn-send-msg"><i class="fas fa-paper-plane"></i></button>
       </div>

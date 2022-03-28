@@ -114,7 +114,6 @@ audio {
     color: white;
 }
 
-
 .banner {
     height: 100px;
     background: url(imgs/banner.png);
@@ -237,7 +236,11 @@ audio {
     border-color: white transparent transparent transparent;
 }
 
-.scroll-down-btn {
+.message-block {
+    padding: 0;
+}
+
+#scrollToBottomBtn {
     position: absolute;
     background-color: white;
     border-radius: 35%;
@@ -246,6 +249,14 @@ audio {
     padding: 10px 12px;
     bottom: 90px;
     right: 20px;
+    opacity: 1;
+    transition: opacity 0.5s, bottom 0.5s, scale 0.5s, color 0.3s; 
+}
+
+#scrollToBottomBtn.btn-off {
+    opacity: 0;
+    bottom: 0px;
+    transition: opacity 0.5s, bottom 0.5s, scale 0.5s, color 0.3s; 
 }
 
 .msg-reactions {
@@ -290,6 +301,7 @@ audio {
     width: 25px;
     height: 25px;
     left: 5px;
+    cursor: pointer;
 }
 
 .msg-menu .menu-reactions {
@@ -303,6 +315,7 @@ audio {
     overflow-x: hidden;
     overflow-y: scroll;
     scroll-behavior: 25px;
+    cursor: pointer;
 }
 
 .p-messaged-chat:hover .menu-reactions:hover {
@@ -408,6 +421,36 @@ audio {
     outline: none;
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
+    z-index: 1;
+}
+
+.reply-preview {
+    position: absolute;
+    display: inline-block;
+    width: calc(100% - 10px);
+    height: 75px;
+    top: -75px;
+    left: 0;
+    background-color: #e3e3e3;
+    padding: 5px;
+    z-index: 0;
+    transition: top 0.5s;
+}
+
+.reply-preview.reply-off {
+    top: 0;
+    transition: top 0.5s;
+}
+
+.reply-preview .reply-chat {
+    font-size: 9pt;
+    margin: 0;
+    background-color: #e3e3e3;
+}
+
+.reply-preview .reply-close {
+    float: right;
+    cursor: pointer;
 }
 
 .btn-send-msg {
@@ -417,6 +460,7 @@ audio {
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
     cursor: pointer;
+    z-index: 1;
 }
 
 
