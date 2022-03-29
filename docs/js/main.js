@@ -115,16 +115,18 @@ function sendReply(element) {
     let reply_s_chat = document.getElementById("sReplyChat");
 
     let id = element.closest('.msg-container').dataset.id;
-    let content = element.closest('.p-messaged-chat').textContent;
+    let content = element.closest('.p-messaged-chat').querySelector('.msg-content').textContent;
     let name = element.closest('.p-messaged-chat').querySelector('.s-messaged-chat').textContent;
 
     reply_preview.classList.remove("reply-off");
     reply_chat.innerHTML = content;
     reply_s_chat.innerHTML = name;
-    console.log(id);
-    console.log(content);
-    console.log(name);
     reply_preview.dataset.id = id;
+}
+
+function closeReply() {
+    document.getElementById("replyPreview").dataset.id = "";
+    document.getElementById("replyPreview").classList.add("reply-off");
 }
 
 async function starthost() {
@@ -156,12 +158,6 @@ async function starthost() {
         }, 5000);
     };
 
-    function closeReply() {
-        // TODO: limpar o conteúdo do preview de reply e minimizar
-        document.getElementById("replyPreview").dataset.id = "";
-        document.getElementById("replyPreview").classList.add("reply-off");
-    }
-    
     function printMessage (data, messageBlock) {
         if (data.content != null && data.content.trim() !== '') {
             let peerNode = document.createElement('div');
@@ -214,7 +210,7 @@ async function starthost() {
                                     escapeHtml(data.username) + 
                                     '</strong> ' + 
                                     messageReply +
-                                    linkifyHtml(escapeHtml(data.content), {target: '_blank'}) + 
+                                    '<span class="msg-content">' + linkifyHtml(escapeHtml(data.content), {target: '_blank'}) + '</span>' +
                                     '<span class="msg-reactions">' +
                                     reactionNode +                                        
                                     '</span>' +
