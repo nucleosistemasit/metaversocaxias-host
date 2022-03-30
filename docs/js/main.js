@@ -52,6 +52,8 @@ var audioDeviceId = '';
 const socket = io.connect('https://tecnicaspedagogicas.com.br:443');
 var producer = null;
 var rc = null;
+var current_page = 1;
+var chatSocket = null;
 script.src = loaderUrl;
 script.onload = () => {
     createUnityInstance(canvas, config, (progress) => {
@@ -129,6 +131,20 @@ function closeReply() {
     document.getElementById("replyPreview").classList.add("reply-off");
 }
 
+function loadNextPage(event) {
+    let chatContainer = document.getElementById("chat");
+    if (event.target.scrollTop == 0) {
+        chatContainer.removeEventListener("scroll", loadNextPage);
+        chatSocket.send(JSON.stringify({"command": "next_page", page_number: current_page}));
+    }
+}
+
+function setInfiniteScroll() {
+    let chatContainer = document.getElementById("chat");
+    chatContainer.removeEventListener("scroll", loadNextPage);
+    chatContainer.addEventListener("scroll", loadNextPage);
+}
+
 async function starthost() {
     document.getElementById("start-connection").disabled = true;
     if (mediaStream == null) {
@@ -144,7 +160,7 @@ async function starthost() {
     }
 
     let authToken = localStorage.getItem('authToken');
-    const chatSocket = new ReconnectingWebSocket('ws://127.0.0.1:8000/ws/chat/talk/?token=' + authToken);
+    chatSocket = new ReconnectingWebSocket('ws://127.0.0.1:8000/ws/chat/talk/?token=' + authToken);
 
     chatSocket.onopen = function(e) {
         document.getElementById("status").innerHTML = "Online";
@@ -153,12 +169,12 @@ async function starthost() {
         chatSocket.send(JSON.stringify({"command": "connect"}));
 
     var loopInterval = setInterval(function() {
-        chatSocket.send(JSON.stringify({type: 'command', content: slideIndex, name: 'slideSet'}));
-        chatSocket.send(JSON.stringify({type: 'command', content: hostIndex, name: 'changeHost'}));
+        chatSocket.send(JSON.stringify({"command": "control", content: slideIndex, name: 'slideSet'}));
+        chatSocket.send(JSON.stringify({"command": "control", content: hostIndex, name: 'changeHost'}));
         }, 5000);
     };
 
-    function printMessage (data, messageBlock) {
+    function printMessage (data, messageBlock, scrollToBottom) {
         if (data.content != null && data.content.trim() !== '') {
             let peerNode = document.createElement('div');
             let messageReply = '';
@@ -218,8 +234,15 @@ async function starthost() {
                                     '</p>' +
                                   '</span>';
             messageBlock.appendChild(peerNode);
-
-            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+            if (scrollToBottom) {
+                if (data.from_me) {
+                    document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+                }
+            }
+            else {
+                let messageBlockHeight = messageBlock.clientHeight;
+                document.getElementById('chat').scrollTop = messageBlockHeight;
+            }
         }
     }
     
@@ -229,17 +252,59 @@ async function starthost() {
               // Palestrante recebe pacote
     if (data.type == 'chat_message') {
         let messageBlock = document.getElementById('chat');
-        printMessage(data, messageBlock);
+        printMessage(data, messageBlock, true);
     }
     else if (data.type == 'chat_history'){
         let messageBlock = document.createElement('div');
         messageBlock.classList.add("message-block");
         document.getElementById('chat').prepend(messageBlock);
         for (message of data.messages) {
-            printMessage(message, messageBlock);
+            printMessage(message, messageBlock, false);
+        }
+        current_page++;
+        if (data.has_next_page) {
+            setInfiniteScroll();
         }
     }
-    else if (data.type == 'command') {
+    else if (data.type == 'chat_control') {
+        if (data.name != null && data.name == 'slideChange'){
+            gameInstance.SendMessage('ScriptHandler', 'SlideChange', data.content);
+        }
+        else if (data.name != null && data.name == 'changeHost'){
+            gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', data.content);
+        }
+        else if (data.name != null && data.name == 'slideSet'){
+            gameInstance.SendMessage('ScriptHandler', 'SlideSet', data.content);
+        }
+    }
+    else if (data.type == 'chat_start') {
+        if (data.username != null) {
+            document.getElementById("host-name").textContent = data.username;
+        }
+        if (data.profile_picture != null) {
+            document.getElementById("host-picture").src = data.profile_picture;
+        }
+        if (data.permissions.includes('chat.can_control_presentation_slides')) {
+            document.getElementById("slide-header").style.display = '';
+            document.getElementById("previous-slide").style.display = '';
+            document.getElementById("next-slide").style.display = '';
+        }
+        if (data.permissions.includes('chat.can_control_microphone')) {
+            document.getElementById("mic-header").style.display = '';
+            document.getElementById("toggle-mic").style.display = '';
+        }
+        if (data.permissions.includes('chat.can_export_talk_to_csv')) {
+            document.getElementById("animation-header").style.display = '';
+            document.getElementById("palestrante-1").style.display = '';
+            document.getElementById("palestrante-2").style.display = '';
+            document.getElementById("palestrante-3").style.display = '';
+            document.getElementById("palestrante-4").style.display = '';
+            document.getElementById("stop-talk").style.display = '';
+        }
+        if (data.permissions.includes('chat.can_export_exhibition_to_csv')) {
+            document.getElementById("export-header").style.display = '';
+            document.getElementById("download-csv").style.display = '';
+        }
     }
     else if (data.type == 'chat_connection') {
         connectionCount++;
@@ -250,12 +315,12 @@ async function starthost() {
         document.getElementById('chat').appendChild(peerNode);
         document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
     }
-    else if (data.type == 'disconnection') {
+    else if (data.type == 'chat_disconnection') {
         connectionCount--;
         document.getElementById('conexoes').innerHTML = connectionCount;
         let peerNode = document.createElement('p');
         peerNode.className = "p-exited-chat";
-        peerNode.innerHTML = '<strong class="s-exited-chat">' + escapeHtml(data.name) + '</strong> saiu da sala.';
+        peerNode.innerHTML = '<strong class="s-exited-chat">' + escapeHtml(data.username) + '</strong> saiu da sala.';
         document.getElementById('chat').appendChild(peerNode);
         document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
         }
@@ -324,17 +389,12 @@ async function starthost() {
 
     previousButton.addEventListener("click", function() {
     // Host envia "voltar slide"
-        chatSocket.send(JSON.stringify({type: 'command', content: 'previous'}));
-        gameInstance.SendMessage('ScriptHandler', 'SlideChange', 'previous');
-    if (slideIndex > 0){
-      slideIndex--;
-    }
+        chatSocket.send(JSON.stringify({"command": "control", content: 'previous', name: 'slideChange'}));
     });
   
     nextButton.addEventListener("click", function() {
     // Host envia "avançar slide"
-        chatSocket.send(JSON.stringify({type: 'command', content: 'next'}));
-        gameInstance.SendMessage('ScriptHandler', 'SlideChange', 'next');
+        chatSocket.send(JSON.stringify({"command": "control", content: 'next', name: 'slideChange'}));
         slideIndex++;
     });
 
@@ -346,31 +406,26 @@ async function starthost() {
 
     palestrante1.addEventListener("click", function() {
         hostIndex = 0;
-        chatSocket.send(JSON.stringify({type: 'command', content: 0, name: 'changeHost'}));
-        gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 0);      
+        chatSocket.send(JSON.stringify({"command": "control", content: 0, name: 'changeHost'}));
     });
 
     palestrante2.addEventListener("click", function() {
         hostIndex = 1;
-        chatSocket.send(JSON.stringify({type: 'command', content: 1, name: 'changeHost'}));
-        gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 1);      
+        chatSocket.send(JSON.stringify({"command": "control", content: 1, name: 'changeHost'}));
     });
 
     palestrante3.addEventListener("click", function() {
         hostIndex = 2;
-        chatSocket.send(JSON.stringify({type: 'command', content: 2, name: 'changeHost'}));
-        gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 2);      
+        chatSocket.send(JSON.stringify({"command": "control", content: 2, name: 'changeHost'}));
     });
 
     palestrante4.addEventListener("click", function() {
         hostIndex = 3;
-        chatSocket.send(JSON.stringify({type: 'command', content: 3, name: 'changeHost'}));
-        gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', 3);      
+        chatSocket.send(JSON.stringify({"command": "control", content: 3, name: 'changeHost'}));
     });
 
     stopTalk.addEventListener("click", function() {
         hostIndex = -1;
-        chatSocket.send(JSON.stringify({type: 'command', content: -1, name: 'changeHost'}));
-        gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', -1);      
+        chatSocket.send(JSON.stringify({"command": "control", content: -1, name: 'changeHost'}));
     });
 }
