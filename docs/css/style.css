@@ -143,6 +143,16 @@ audio {
     display: block;
 }
 
+.dash-controlls button.btn-primary {
+    background-color: #69aab5;
+    border-color: #69aab5;
+}
+
+.dash-controlls button.btn-primary:hover {
+    background-color: #69dfb6;
+    border-color: #69dfb6;
+}
+
 .chat.chat-client {
     display: inline-block;
     height: calc(100% - 230px);
@@ -345,7 +355,6 @@ audio {
     display: block;
     margin-top: 5px;
     margin-bottom: 5px;
-    padding: 5px;
     padding-left: 10px;
     font-size: 10pt;
     color: #707070;
@@ -353,13 +362,13 @@ audio {
     border-radius: 5px;
     display: -webkit-box;
     overflow: hidden;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
 }
 
 .s-reply-chat {
-    display: block;
     font-size: 9pt;
+    padding-left: 10px;
     color: #707070;
 }
 
@@ -429,17 +438,17 @@ audio {
     display: inline-block;
     width: calc(100% - 10px);
     height: 75px;
-    top: -75px;
+    bottom: 80px;
     left: 0;
     background-color: #e3e3e3;
     padding: 5px;
     z-index: 0;
-    transition: top 0.5s;
+    transition: bottom 0.5s;
 }
 
 .reply-preview.reply-off {
-    top: 0;
-    transition: top 0.5s;
+    bottom: 0;
+    transition: bottom 0.5s;
 }
 
 .reply-preview .reply-chat {
@@ -451,6 +460,8 @@ audio {
 .reply-preview .reply-close {
     float: right;
     cursor: pointer;
+    margin-right: 5px;
+    font-size: 9pt;
 }
 
 .btn-send-msg {

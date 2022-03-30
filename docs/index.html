@@ -26,14 +26,14 @@
       <div id="chat" class="row chat chat-client">	
         <span><i id="scrollToBottomBtn" class="fas fa-caret-down"></i></span>
       </div>
+      <div id="replyPreview" class="reply-preview" data-id="">
+        <strong id="sReplyChat" class="s-reply-chat">Milton</strong>
+        <span class="reply-close"><i class="fas fa-close" onclick="closeReply()"></i></span>
+        <span id="replyChat" class="reply-chat">
+          Ola, tudo bem? Queria saber o que você acho do front dessa pagina legal do chat que eu fiz para a palestra do evento da Senior X Store
+        </span>
+      </div>
       <div class="row msg-box">
-        <div id="replyPreview" class="reply-preview reply-off" data-id="">
-          <strong id="sReplyChat" class="s-reply-chat">Milton</strong>
-          <span><i class="fas fa-close reply-close" onclick="closeReply()"></i></span>
-          <span id="replyChat" class="reply-chat">
-            Ola, tudo bem? Queria saber o que você acho do front dessa pagina legal do chat que eu fiz para a palestra do evento da Senior X Store
-          </span>
-        </div>
         <textarea id="message-content" class="type-msg col-10" placeholder="Mensagem..."></textarea>
         <button id="send-message" class="col-2 btn btn-send-msg"><i class="fas fa-paper-plane"></i></button>
       </div>
