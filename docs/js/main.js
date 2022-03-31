@@ -404,13 +404,6 @@ async function starthost() {
             }
             chatSocket.send(JSON.stringify(messageData));
 
-            // Print message
-            // let peerNode = document.createElement('p');
-            // peerNode.className = "p-messaged-chat";
-            // peerNode.innerHTML = '<strong class="s-messaged-chat">Palestrante</strong> ' + linkifyHtml(escapeHtml(messageContent), {target: '_blank'});
-            // document.getElementById('chat').appendChild(peerNode);
-            // document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
-
             // Clear textarea
             messageTextarea.value = '';
             closeReply();
@@ -443,6 +436,8 @@ async function starthost() {
     const palestrante4 = document.getElementById("palestrante-4");
     const stopTalk = document.getElementById("stopTalk");
     const exportCSV = document.getElementById("download-csv");
+    const pictureInput = document.getElementById("picture-input");
+    const deletePicture = document.getElementById("delete-picture");
 
     palestrante1.addEventListener("click", function() {
         hostIndex = 0;
@@ -470,7 +465,6 @@ async function starthost() {
     });
 
     exportCSV.addEventListener("click", function() {
-        console.log('export csv')
         const url = 'http://127.0.0.1:8000/api/export-chat/';
         const authHeader = 'Bearer ' + localStorage.getItem('authToken');
         const options = {
@@ -483,6 +477,43 @@ async function starthost() {
             .then( blob => {
                 let file = window.URL.createObjectURL(blob);
                 window.location.assign(file);
+            });
+    });
+
+    pictureInput.addEventListener("change", function(event) {
+        if (event.target.files && event.target.files[0]) {
+            const formData = new FormData();
+            formData.append('profile_picture', event.target.files[0]);
+            const url = 'http://127.0.0.1:8000/api/profile-picture/';
+            const authHeader = 'Bearer ' + localStorage.getItem('authToken');
+            const options = {
+                method: "POST",
+                headers: {
+                    Authorization: authHeader
+                },
+                body: formData
+            };
+            fetch(url, options)
+                .then( res => res.json() )
+                .then( response_json => {
+                    document.getElementById("host-picture").src = response_json.profile_picture;
+                    event.target.value = "";
+                });
+        }
+    });
+
+    deletePicture.addEventListener("click", function() {
+        const url = 'http://127.0.0.1:8000/api/profile-picture/';
+        const authHeader = 'Bearer ' + localStorage.getItem('authToken');
+        const options = {
+            method: "DELETE",
+            headers: {
+                Authorization: authHeader
+            }
+        };
+        fetch(url, options)
+            .then( res => {
+                document.getElementById("host-picture").src = "";
             });
     });
 }

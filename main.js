@@ -1,13 +1,26 @@
-var original_input = document.getElementById('id_original_image');
-if (typeof(original_input) != 'undefined' && original_input != null)
-{
-  document.querySelector('#id_original_image').addEventListener('change', event => {
-    document.querySelector('form p').innerText = 'Imagem selecionada';
-  });
+function login() {
+  let username = document.getElementById("username-input").value;
+  let password = document.getElementById("password-input").value;
+  let headers = {"Content-Type": "application/json", "Accept": "application/json"};
+  fetch('http://localhost:8000/api/login/', {
+    method: 'POST',
+    body: JSON.stringify({"username": username, "password": password}),
+    headers: headers
+  }).then( res => res.json() )
+    .then( response_json => {
+      console.log(response_json);
+      if (response_json.access != null) {
+        localStorage.setItem('authToken', response_json.access);
+        document.location.href = '/docs';
+      }
+      else {
+        document.getElementById("login-error").style.display = "";
+      }
+    });
 }
 
-  var canvas = document.getElementById("canvas"),
-    ctx = canvas.getContext('2d');
+var canvas = document.getElementById("canvas"),
+ctx = canvas.getContext('2d');
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
