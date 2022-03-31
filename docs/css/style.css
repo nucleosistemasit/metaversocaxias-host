@@ -24,6 +24,10 @@
     background-color: #e3e3e3;
 }
 
+#host-picture {
+    border-radius: 50%;
+}
+
 .side-panel {
     width: 30vw;
     left: 0;
@@ -218,6 +222,13 @@ audio {
     margin-bottom: 5px;
 }
 
+.chat p.p-messaged-chat .msg-timestamp {
+    float: right;
+    font-size: 9pt;
+    color: #888;
+    
+}
+
 .chat p.p-entered-chat::before {
     content: "";
     background-color: #4de113;
@@ -269,15 +280,18 @@ audio {
     transition: opacity 0.5s, bottom 0.5s, scale 0.5s, color 0.3s; 
 }
 
+.scroll-to-bottom-btn {
+    padding: 0;
+}
+
 .msg-reactions {
-    display: none;
     display: block;
     margin-top: 5px;
 }
 
 .msg-reactions .reaction {
-    display: inline-block;
-    height: 25px;
+    display: none;
+    /* height: 25px; */
     min-width: 40px;
     border: 1px solid #5c5c5c;
     border-radius: 7px;
@@ -285,9 +299,22 @@ audio {
     margin-right: 5px;
     background-color: transparent;
     text-align: left;
+    padding: 2px;
     padding-left: 8px;
     padding-right: 8px;    
     margin-bottom: 5px;
+    cursor: pointer;
+}
+
+.msg-reactions .reaction.sent {
+    color: #69aab5;
+    border-color: #69aab5;
+    background-color: #69dfb636;
+    border-width: 2px;
+}
+
+.msg-reactions .reaction.visible {
+    display: inline-block;
 }
 
 .p-messaged-chat .msg-menu {
@@ -355,20 +382,26 @@ audio {
     display: block;
     margin-top: 5px;
     margin-bottom: 5px;
-    padding-left: 10px;
+    padding: 5px 10px 5px 10px;
     font-size: 10pt;
     color: #707070;
     background-color: #e0e0e0;
     border-radius: 5px;
     display: -webkit-box;
     overflow: hidden;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
 }
 
 .s-reply-chat {
     font-size: 9pt;
     padding-left: 10px;
+    color: #707070;
+}
+
+.s-reply-preview {
+    display: block;
+    font-size: 9pt;
     color: #707070;
 }
 

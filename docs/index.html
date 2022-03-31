@@ -30,9 +30,9 @@
         </div>
       </div>
       <div id="chat" class="row chat chat-client">	
-        <span><i id="scrollToBottomBtn" class="fas fa-caret-down"></i></span>
+        <span class="scroll-to-bottom-btn"><i id="scrollToBottomBtn" class="fas fa-caret-down"></i></span>
       </div>
-      <div id="replyPreview" class="reply-preview" data-id="">
+      <div id="replyPreview" class="reply-preview reply-off" data-id="">
         <strong id="sReplyChat" class="s-reply-chat">Milton</strong>
         <span class="reply-close"><i class="fas fa-close" onclick="closeReply()"></i></span>
         <span id="replyChat" class="reply-chat">
@@ -62,7 +62,7 @@
               <span class="header">Conexão</span>
               <button class="iniciar-host btn btn-primary" id="start-connection" disabled>Conectar</button>
             </div>
-            <div class="col-3">
+            <div class="col-2">
               <span id="slide-header" class="header" style="display: none;">Slides</span>
               <button id="previous-slide" class="btn btn-slide btn-primary" style="display: none;" disabled><</button>
               <button id="next-slide" class="btn btn-slide btn-primary" style="display: none;" disabled>></button>
@@ -71,14 +71,18 @@
               <span id="mic-header" class="header" style="display: none;">Microfone</span>
               <button id="toggle-mic" class="btn mic-on btn-primary" style="display: none;" disabled>Ligado</button>
             </div>
-            <div class="col-5">
+            <div class="col-4">
               <span id="animation-header" class="header" style="display: none;">Animação</span>
               <button id="palestrante-1" class="btn btn-primary" style="display: none;" disabled>1</button>
               <button id="palestrante-2" class="btn btn-primary" style="display: none;" disabled>2</button>
               <button id="palestrante-3" class="btn btn-primary" style="display: none;" disabled>3</button>
               <button id="palestrante-4" class="btn btn-primary" style="display: none;" disabled>4</button>
               <button id="stopTalk" class="btn btn-primary" style="display: none;" disabled>Parar</button>
-            </div> 
+            </div>
+            <div class="col-2">
+              <span id="export-header" class="header" style="display: none;">Exportar CSV</span>
+              <button id="download-csv" class="btn btn-slide btn-primary" style="display: none;" disabled>Exportar</button>
+            </div>
           </div> 
         </div>
         <!-- <div id="unity-webgl-logo"></div> -->

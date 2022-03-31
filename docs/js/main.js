@@ -70,6 +70,7 @@ script.onload = () => {
         document.getElementById("palestrante-3").disabled = false;
         document.getElementById("palestrante-4").disabled = false;
         document.getElementById("stopTalk").disabled = false;
+        document.getElementById("download-csv").disabled = false;
 //           fullscreenButton.onclick = () => {
 //             unityInstance.SetFullscreen(1);
 //           };
@@ -145,6 +146,17 @@ function setInfiniteScroll() {
     chatContainer.addEventListener("scroll", loadNextPage);
 }
 
+function toggleReaction(element) {
+    let reaction_type = element.dataset.reaction;
+    let id = element.closest('.msg-container').dataset.id;
+    if (element.classList.contains('sent')) {
+        chatSocket.send(JSON.stringify({"command": "react_remove", "message": id, "reaction_type": parseInt(reaction_type)}));
+    }
+    else {
+        chatSocket.send(JSON.stringify({"command": "react_add", "message": id, "reaction_type": parseInt(reaction_type)}));
+    }
+}
+
 async function starthost() {
     document.getElementById("start-connection").disabled = true;
     if (mediaStream == null) {
@@ -180,7 +192,7 @@ async function starthost() {
             let messageReply = '';
             if (data.reply_to != null) {
                 messageReply = '<span class="reply-chat">' +
-                                        '<strong class="s-reply-chat">' + 
+                                        '<strong class="s-reply-preview">' + 
                                             data.reply_to.username +
                                         '</strong>' +
                                         data.reply_to.content +
@@ -193,34 +205,34 @@ async function starthost() {
             peerNode.classList.add('msg-container');
             let messageMenu = '<span id="messageMenu" class="msg-menu">' +
                                     '<span id="replyMenu-' + data.id + '" class="menu-reply" onclick="sendReply(this)">⬅</span>' +      
-                                    '<span id="reactionMenu-' + data.id + '" class="menu-reactions" onclick="sendReaction()">' +
-                                    '<span class="reaction" onclick="toggleReaction()">👍</span>' +
-                                    '<span class="reaction" onclick="toggleReaction()">👏</span>' +
-                                    '<span class="reaction" onclick="toggleReaction()">❤</span>' +
-                                    '<span class="reaction" onclick="toggleReaction()">🙌</span>' +
-                                    '<span class="reaction" onclick="toggleReaction()">😮</span>' +
-                                    '<span class="reaction" onclick="toggleReaction()">🤣</span>' +
+                                    '<span id="reactionMenu-' + data.id + '" class="menu-reactions">' +
+                                    '<span class="reaction-menu" data-reaction="1" onclick="toggleReaction(this)">👍</span>' +
+                                    '<span class="reaction-menu" data-reaction="2" onclick="toggleReaction(this)">👏</span>' +
+                                    '<span class="reaction-menu" data-reaction="3" onclick="toggleReaction(this)">❤</span>' +
+                                    '<span class="reaction-menu" data-reaction="4" onclick="toggleReaction(this)">🙌</span>' +
+                                    '<span class="reaction-menu" data-reaction="5" onclick="toggleReaction(this)">😮</span>' +
+                                    '<span class="reaction-menu" data-reaction="6" onclick="toggleReaction(this)">🤣</span>' +
                                     '</span>' +
                                 '</span>';
             let reactionNode = '';
-            if (data.reaction_1 > 0) {
-                reactionNode += '<span class="reaction">👍 ' + data.reaction_1 + '</span>';
-            }
-            if (data.reaction_2 > 0) {
-                reactionNode += '<span class="reaction">👏 ' + data.reaction_2 + '</span>';
-            }
-            if (data.reaction_3 > 0) {
-                reactionNode += '<span class="reaction">❤ ' + data.reaction_3 + '</span>';
-            }
-            if (data.reaction_4 > 0) {
-                reactionNode += '<span class="reaction">🙌 ' + data.reaction_4 + '</span>';
-            }
-            if (data.reaction_5 > 0) {
-                reactionNode += '<span class="reaction">😮 ' + data.reaction_5 + '</span>';
-            }
-            if (data.reaction_6 > 0) {
-                reactionNode += '<span class="reaction">🤣 ' + data.reaction_6 + '</span>';
-            }
+            let visible_1 = data.reaction_1 > 0 ? "visible" : "";
+            let sent_1 = data.sent_reactions.includes(1) ? "sent" : "";
+            reactionNode += '<span class="reaction ' + sent_1 + ' ' + visible_1 + '" data-reaction="1" onclick="toggleReaction(this)">👍<span class="react-quantity">' + data.reaction_1 + '</span></span>';
+            let visible_2 = data.reaction_2 > 0 ? "visible" : "";
+            let sent_2 = data.sent_reactions.includes(2) ? "sent" : "";
+            reactionNode += '<span class="reaction ' + sent_2 + ' ' + visible_2 + '" data-reaction="2" onclick="toggleReaction(this)">👏<span class="react-quantity">' + data.reaction_2 + '</span></span>';
+            let visible_3 = data.reaction_3 > 0 ? "visible" : "";
+            let sent_3 = data.sent_reactions.includes(3) ? "sent" : "";
+            reactionNode += '<span class="reaction ' + sent_3 + ' ' + visible_3 + '" data-reaction="3" onclick="toggleReaction(this)">❤<span class="react-quantity">' + data.reaction_3 + '</span></span>';
+            let visible_4 = data.reaction_4 > 0 ? "visible" : "";
+            let sent_4 = data.sent_reactions.includes(4) ? "sent" : "";
+            reactionNode += '<span class="reaction ' + sent_4 + ' ' + visible_4 + '" data-reaction="4" onclick="toggleReaction(this)">🙌<span class="react-quantity">' + data.reaction_4 + '</span></span>';
+            let visible_5 = data.reaction_5 > 0 ? "visible" : "";
+            let sent_5 = data.sent_reactions.includes(5) ? "sent" : "";
+            reactionNode += '<span class="reaction ' + sent_5 + ' ' + visible_5 + '" data-reaction="5" onclick="toggleReaction(this)">😮<span class="react-quantity">' + data.reaction_5 + '</span></span>';
+            let visible_6 = data.reaction_6 > 0 ? "visible" : "";
+            let sent_6 = data.sent_reactions.includes(6) ? "sent" : "";
+            reactionNode += '<span class="reaction ' + sent_6 + ' ' + visible_6 + '" data-reaction="6" onclick="toggleReaction(this)">🤣<span class="react-quantity">' + data.reaction_6 + '</span></span>';
             
             peerNode.innerHTML = '<p class="p-messaged-chat"><strong class="s-messaged-chat">' + 
                                     escapeHtml(data.username) + 
@@ -229,6 +241,9 @@ async function starthost() {
                                     '<span class="msg-content">' + linkifyHtml(escapeHtml(data.content), {target: '_blank'}) + '</span>' +
                                     '<span class="msg-reactions">' +
                                     reactionNode +                                        
+                                    '</span>' +
+                                    '<span class="msg-timestamp">' +
+                                    data.created_at.split(" ")[1] +
                                     '</span>' +
                                     messageMenu +
                                     '</p>' +
@@ -266,6 +281,30 @@ async function starthost() {
             setInfiniteScroll();
         }
     }
+    else if (data.type == 'chat_reaction') {
+        let messageElement = document.querySelector('.msg-container[data-id="' + data.message + '"]');
+        if (messageElement != null) {
+            let reactionElement = messageElement.querySelector('.reaction[data-reaction="' + data.reaction_type + '"]');
+            let reactionQuantity = reactionElement.querySelector('.react-quantity');
+            reactionQuantity.textContent = data.quantity;
+            if (data.name == 'react_add') {
+                reactionElement.style.display = 'inline-block';
+                if (data.from_me) {
+                    reactionElement.classList.add('sent');
+                }
+            }
+            else if (data.name == 'react_remove') {
+                if (data.quantity == 0) {
+                    reactionElement.style.display = 'none';
+                }
+                else {
+                    if (data.from_me) {
+                        reactionElement.classList.remove('sent');
+                    }
+                }
+            }
+        }
+    }
     else if (data.type == 'chat_control') {
         if (data.name != null && data.name == 'slideChange'){
             gameInstance.SendMessage('ScriptHandler', 'SlideChange', data.content);
@@ -293,15 +332,15 @@ async function starthost() {
             document.getElementById("mic-header").style.display = '';
             document.getElementById("toggle-mic").style.display = '';
         }
-        if (data.permissions.includes('chat.can_export_talk_to_csv')) {
+        if (data.permissions.includes('chat.can_control_presentation_slides')) {
             document.getElementById("animation-header").style.display = '';
             document.getElementById("palestrante-1").style.display = '';
             document.getElementById("palestrante-2").style.display = '';
             document.getElementById("palestrante-3").style.display = '';
             document.getElementById("palestrante-4").style.display = '';
-            document.getElementById("stop-talk").style.display = '';
+            document.getElementById("stopTalk").style.display = '';
         }
-        if (data.permissions.includes('chat.can_export_exhibition_to_csv')) {
+        if (data.permissions.includes('chat.can_export_talk_to_csv')) {
             document.getElementById("export-header").style.display = '';
             document.getElementById("download-csv").style.display = '';
         }
@@ -403,6 +442,7 @@ async function starthost() {
     const palestrante3 = document.getElementById("palestrante-3");
     const palestrante4 = document.getElementById("palestrante-4");
     const stopTalk = document.getElementById("stopTalk");
+    const exportCSV = document.getElementById("download-csv");
 
     palestrante1.addEventListener("click", function() {
         hostIndex = 0;
@@ -427,5 +467,22 @@ async function starthost() {
     stopTalk.addEventListener("click", function() {
         hostIndex = -1;
         chatSocket.send(JSON.stringify({"command": "control", content: -1, name: 'changeHost'}));
+    });
+
+    exportCSV.addEventListener("click", function() {
+        console.log('export csv')
+        const url = 'http://127.0.0.1:8000/api/export-chat/';
+        const authHeader = 'Bearer ' + localStorage.getItem('authToken');
+        const options = {
+            headers: {
+                Authorization: authHeader
+            }
+        };
+        fetch(url, options)
+            .then( res => res.blob() )
+            .then( blob => {
+                let file = window.URL.createObjectURL(blob);
+                window.location.assign(file);
+            });
     });
 }
