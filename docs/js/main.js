@@ -179,11 +179,6 @@ async function starthost() {
         document.getElementById("status").classList.add('conn-on');
         document.getElementById("status").classList.remove('conn-off');
         chatSocket.send(JSON.stringify({"command": "connect"}));
-
-    var loopInterval = setInterval(function() {
-        chatSocket.send(JSON.stringify({"command": "control", content: slideIndex, name: 'slideSet'}));
-        chatSocket.send(JSON.stringify({"command": "control", content: hostIndex, name: 'changeHost'}));
-        }, 5000);
     };
 
     function printMessage (data, messageBlock, scrollToBottom) {
@@ -327,6 +322,11 @@ async function starthost() {
             document.getElementById("slide-header").style.display = '';
             document.getElementById("previous-slide").style.display = '';
             document.getElementById("next-slide").style.display = '';
+
+            var loopInterval = setInterval(function() {
+                chatSocket.send(JSON.stringify({"command": "control", content: slideIndex, name: 'slideSet'}));
+                chatSocket.send(JSON.stringify({"command": "control", content: hostIndex, name: 'changeHost'}));
+            }, 5000);
         }
         if (data.permissions.includes('chat.can_control_microphone')) {
             document.getElementById("mic-header").style.display = '';
