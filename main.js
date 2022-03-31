@@ -1,3 +1,9 @@
+(() => {
+  if (localStorage.getItem('authToken')) {
+    document.location.href = '/docs';
+  }
+})();
+
 function login() {
   let username = document.getElementById("username-input").value;
   let password = document.getElementById("password-input").value;
