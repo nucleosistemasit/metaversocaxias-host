@@ -210,25 +210,23 @@ async function starthost() {
                                     '</span>' +
                                 '</span>';
             let reactionNode = '';
-            let visible_1 = data.reaction_1 > 0 ? "visible" : "";
-            let sent_1 = data.sent_reactions.includes(1) ? "sent" : "";
-            reactionNode += '<span class="reaction ' + sent_1 + ' ' + visible_1 + '" data-reaction="1" onclick="toggleReaction(this)">👍<span class="react-quantity">' + data.reaction_1 + '</span></span>';
-            let visible_2 = data.reaction_2 > 0 ? "visible" : "";
-            let sent_2 = data.sent_reactions.includes(2) ? "sent" : "";
-            reactionNode += '<span class="reaction ' + sent_2 + ' ' + visible_2 + '" data-reaction="2" onclick="toggleReaction(this)">👏<span class="react-quantity">' + data.reaction_2 + '</span></span>';
-            let visible_3 = data.reaction_3 > 0 ? "visible" : "";
-            let sent_3 = data.sent_reactions.includes(3) ? "sent" : "";
-            reactionNode += '<span class="reaction ' + sent_3 + ' ' + visible_3 + '" data-reaction="3" onclick="toggleReaction(this)">❤<span class="react-quantity">' + data.reaction_3 + '</span></span>';
-            let visible_4 = data.reaction_4 > 0 ? "visible" : "";
-            let sent_4 = data.sent_reactions.includes(4) ? "sent" : "";
-            reactionNode += '<span class="reaction ' + sent_4 + ' ' + visible_4 + '" data-reaction="4" onclick="toggleReaction(this)">🙌<span class="react-quantity">' + data.reaction_4 + '</span></span>';
-            let visible_5 = data.reaction_5 > 0 ? "visible" : "";
-            let sent_5 = data.sent_reactions.includes(5) ? "sent" : "";
-            reactionNode += '<span class="reaction ' + sent_5 + ' ' + visible_5 + '" data-reaction="5" onclick="toggleReaction(this)">😮<span class="react-quantity">' + data.reaction_5 + '</span></span>';
-            let visible_6 = data.reaction_6 > 0 ? "visible" : "";
-            let sent_6 = data.sent_reactions.includes(6) ? "sent" : "";
-            reactionNode += '<span class="reaction ' + sent_6 + ' ' + visible_6 + '" data-reaction="6" onclick="toggleReaction(this)">🤣<span class="react-quantity">' + data.reaction_6 + '</span></span>';
-            
+            let reaction_types = ['1', '2', '3', '4', '5', '6'];
+            let reaction_emojis = ['👍', '👏', '❤', '🙌', '😮', '🤣'];
+
+            for (let reaction_type of reaction_types) {
+                let reaction_visible = "";
+                let reaction_sent = "";
+                let reaction_quantity = 0;
+                if (data["reaction_" + reaction_type] != null) {
+                    reaction_quantity = data["reaction_" + reaction_type];
+                    reaction_visible = data["reaction_" + reaction_type] > 0 ? "visible" : "";
+                }
+                if (data.sent_reactions != null) {
+                    reaction_sent = data.sent_reactions.includes(parseInt(reaction_type)) ? "sent" : "";
+                }
+                reactionNode += '<span class="reaction ' + reaction_sent + ' ' + reaction_visible + '" data-reaction="' + reaction_type + '" onclick="toggleReaction(this)">' + reaction_emojis[parseInt(reaction_type) - 1] + '<span class="react-quantity">' + reaction_quantity + '</span></span>';
+            }
+
             peerNode.innerHTML = '<p class="p-messaged-chat"><strong class="s-messaged-chat">' + 
                                     escapeHtml(data.username) + 
                                     '</strong> ' + 
@@ -256,10 +254,10 @@ async function starthost() {
         }
     }
     
-    chatSocket.onmessage = function(e) {
-        const data = JSON.parse(e.data);
-        console.log('data', data);
-              // Palestrante recebe pacote
+chatSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    console.log('data', data);
+    // Palestrante recebe pacote
     if (data.type == 'chat_message') {
         let messageBlock = document.getElementById('chat');
         printMessage(data, messageBlock, true);
@@ -268,6 +266,8 @@ async function starthost() {
         let messageBlock = document.createElement('div');
         messageBlock.classList.add("message-block");
         document.getElementById('chat').prepend(messageBlock);
+        connectionCount = data.connections;
+        document.getElementById('conexoes').innerHTML = data.connections;
         for (message of data.messages) {
             printMessage(message, messageBlock, false);
         }
@@ -316,7 +316,7 @@ async function starthost() {
             document.getElementById("host-name").textContent = data.username;
         }
         if (data.profile_picture != null) {
-            document.getElementById("host-picture").src = data.profile_picture;
+            document.getElementById("host-picture").style.backgroundImage = "url(" + data.profile_picture + ")";
         }
         if (data.permissions.includes('chat.can_control_presentation_slides')) {
             document.getElementById("slide-header").style.display = '';

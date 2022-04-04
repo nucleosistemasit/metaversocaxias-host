@@ -19,9 +19,13 @@
           <span id="status" class="conn-off">Offline</span>
         </div>
         <div class="col-2">
-          <img id="host-picture" width="28px" height="28px">
-          <input id="picture-input" type="file"/>
-          <button id="delete-picture">X</button>
+          <button id="host-picture" class="profile-picture" onclick="pictureEdit()"></button>
+          <div id="pictureMenu" class="picture-menu picture-menu-closed col-12">
+            <label for="picture-input" class="picture-input-label">Editar</label>
+            <input id="picture-input" type="file" onclick="pictureEdit()"/>
+            <label for="delete-picture" class="picture-delete-label">Excluir</label>
+            <button id="delete-picture" class="delete-picture" onclick="pictureEdit()"></button>
+          </div> 
         </div>
         <div class="col-3">
           <span id="host-name"></span>

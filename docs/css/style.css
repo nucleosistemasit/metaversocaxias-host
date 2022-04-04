@@ -103,6 +103,7 @@ audio {
 }
 
 .dash-name .conn-on {
+    display: inline-block;
     background-color: #9ddb84;
     margin-left: 5px;
     border-radius: 15px;
@@ -111,11 +112,59 @@ audio {
 }
 
 .dash-name .conn-off {
+    display: inline-block;
     background-color: rgb(243 139 139);
     margin-left: 5px;
     border-radius: 15px;
     padding: 5px 15px;
     color: white;
+}
+
+.picture-menu {
+    position: absolute;
+    width: fit-content;
+    background-color: #e3e3e3;
+    border-radius: 5px;
+}
+
+.picture-menu input[type="file"],
+.picture-menu .delete-picture {
+    display: none;
+}
+
+.picture-menu-closed {
+    display: none;
+}
+
+.picture-input-label,
+.picture-delete-label {
+    border-radius: 25px;
+    padding: 10px;
+    background-color: #e3e3e3;
+    cursor: pointer;
+    display: block;
+}
+
+.profile-picture {
+    width: 30px;
+    height: 30px;
+    border: none;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.profile-picture:hover {
+    background: rgb(0,0,0,0.5) !important;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.profile-picture:hover::after {
+    content: "\f303";
+    color: white;
+    font-family: FontAwesome;
 }
 
 .banner {
@@ -225,8 +274,7 @@ audio {
 .chat p.p-messaged-chat .msg-timestamp {
     float: right;
     font-size: 9pt;
-    color: #888;
-    
+    color: #888;    
 }
 
 .chat p.p-entered-chat::before {
