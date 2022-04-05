@@ -496,7 +496,7 @@ chatSocket.onmessage = function(e) {
             fetch(url, options)
                 .then( res => res.json() )
                 .then( response_json => {
-                    document.getElementById("host-picture").src = response_json.profile_picture;
+                    document.getElementById("host-picture").style.backgroundImage = "url(" + data.profile_picture + ")";
                     event.target.value = "";
                 });
         }
@@ -513,7 +513,7 @@ chatSocket.onmessage = function(e) {
         };
         fetch(url, options)
             .then( res => {
-                document.getElementById("host-picture").src = "";
+                document.getElementById("host-picture").style.backgroundImage = "";
             });
     });
 }
