@@ -4,6 +4,14 @@
   }
 })();
 
+const sendButton = document.getElementById("send-login");
+
+document.getElementById('password-input').addEventListener('keyup', function(e) {
+  if (e.keyCode == 13) {
+  sendButton.click();
+}
+});
+
 function login() {
   let username = document.getElementById("username-input").value;
   let password = document.getElementById("password-input").value;
