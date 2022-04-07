@@ -199,14 +199,14 @@ async function starthost() {
             }
             peerNode.classList.add('msg-container');
             let messageMenu = '<span id="messageMenu" class="msg-menu">' +
-                                    '<span id="replyMenu-' + data.id + '" class="menu-reply" onclick="sendReply(this)">⬅</span>' +      
+                                    '<span id="replyMenu-' + data.id + '" class="menu-reply" onclick="sendReply(this)"><i class="fa-solid fa-reply"></i></span>' +      
                                     '<span id="reactionMenu-' + data.id + '" class="menu-reactions">' +
-                                    '<span class="reaction-menu" data-reaction="1" onclick="toggleReaction(this)">👍</span>' +
-                                    '<span class="reaction-menu" data-reaction="2" onclick="toggleReaction(this)">👏</span>' +
-                                    '<span class="reaction-menu" data-reaction="3" onclick="toggleReaction(this)">❤</span>' +
-                                    '<span class="reaction-menu" data-reaction="4" onclick="toggleReaction(this)">🙌</span>' +
-                                    '<span class="reaction-menu" data-reaction="5" onclick="toggleReaction(this)">😮</span>' +
-                                    '<span class="reaction-menu" data-reaction="6" onclick="toggleReaction(this)">🤣</span>' +
+                                    '<span class="reaction" data-reaction="1" onclick="toggleReaction(this)">👍</span>' +
+                                    '<span class="reaction" data-reaction="2" onclick="toggleReaction(this)">👏</span>' +
+                                    '<span class="reaction" data-reaction="3" onclick="toggleReaction(this)">❤</span>' +
+                                    '<span class="reaction" data-reaction="4" onclick="toggleReaction(this)">🙌</span>' +
+                                    '<span class="reaction" data-reaction="5" onclick="toggleReaction(this)">😮</span>' +
+                                    '<span class="reaction" data-reaction="6" onclick="toggleReaction(this)">🤣</span>' +
                                     '</span>' +
                                 '</span>';
             let reactionNode = '';
@@ -241,9 +241,10 @@ async function starthost() {
                                     messageMenu +
                                     '</p>' +
                                   '</span>';
+            let isOnBottom = Math.abs(document.getElementById('chat').scrollHeight - document.getElementById('chat').scrollTop - document.getElementById('chat').clientHeight) < 10;
             messageBlock.appendChild(peerNode);
             if (scrollToBottom) {
-                if (data.from_me) {
+                if (data.from_me || isOnBottom) {
                     document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
                 }
             }
@@ -318,6 +319,9 @@ chatSocket.onmessage = function(e) {
         if (data.profile_picture != null) {
             document.getElementById("host-picture").style.backgroundImage = "url(" + data.profile_picture + ")";
         }
+        else {
+            document.getElementById("host-picture").style.backgroundImage = "url(css/imgs/default_pic.jpg)";
+        }
         if (data.permissions.includes('chat.can_control_presentation_slides')) {
             document.getElementById("slide-header").style.display = '';
             document.getElementById("previous-slide").style.display = '';
@@ -348,18 +352,18 @@ chatSocket.onmessage = function(e) {
     else if (data.type == 'chat_connection') {
         connectionCount++;
         document.getElementById('conexoes').innerHTML = connectionCount;
-        let peerNode = document.createElement('p');
-        peerNode.className = "p-entered-chat";
-        peerNode.innerHTML = '<strong class="s-entered-chat">' + escapeHtml(data.username) + '</strong> entrou na sala.';
+        let peerNode = document.createElement('div');
+        peerNode.classList = "msg-container";
+        peerNode.innerHTML = '<p class="p-entered-chat"><strong class="s-entered-chat">' + escapeHtml(data.username) + '</strong> entrou na sala.</p>';
         document.getElementById('chat').appendChild(peerNode);
         document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
     }
     else if (data.type == 'chat_disconnection') {
         connectionCount--;
         document.getElementById('conexoes').innerHTML = connectionCount;
-        let peerNode = document.createElement('p');
-        peerNode.className = "p-exited-chat";
-        peerNode.innerHTML = '<strong class="s-exited-chat">' + escapeHtml(data.username) + '</strong> saiu da sala.';
+        let peerNode = document.createElement('div');
+        peerNode.className = "msg-container";
+        peerNode.innerHTML = '<p class="p-exited-chat"><strong class="s-exited-chat">' + escapeHtml(data.username) + '</strong> saiu da sala.</p>';
         document.getElementById('chat').appendChild(peerNode);
         document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
         }
@@ -376,6 +380,7 @@ chatSocket.onmessage = function(e) {
             document.getElementById("toggle-mic").innerHTML = "Desligado";
             document.getElementById("toggle-mic").classList.add('mic-off');
             document.getElementById("toggle-mic").classList.remove('mic-on');
+            chatSocket.send(JSON.stringify({"command": "control", content: false, name: 'toggleMic'}));
             mediaStream.getAudioTracks()[0].enabled = false;
             rc.closeProducer(RoomClient.mediaType.audio);
     }
@@ -385,6 +390,7 @@ chatSocket.onmessage = function(e) {
             document.getElementById("toggle-mic").innerHTML = "Ligado";
             document.getElementById("toggle-mic").classList.add('mic-on');
             document.getElementById("toggle-mic").classList.remove('mic-off');
+            chatSocket.send(JSON.stringify({"command": "control", content: true, name: 'toggleMic'}));
             mediaStream.getAudioTracks()[0].enabled = true;
             rc.produce(RoomClient.mediaType.audio, audioDeviceId);
     }
@@ -496,7 +502,7 @@ chatSocket.onmessage = function(e) {
             fetch(url, options)
                 .then( res => res.json() )
                 .then( response_json => {
-                    document.getElementById("host-picture").src = response_json.profile_picture;
+                    document.getElementById("host-picture").style.backgroundImage = "url(" + response_json.profile_picture + ")";
                     event.target.value = "";
                 });
         }
@@ -513,7 +519,7 @@ chatSocket.onmessage = function(e) {
         };
         fetch(url, options)
             .then( res => {
-                document.getElementById("host-picture").src = "";
+                document.getElementById("host-picture").style.backgroundImage = "url(css/imgs/default_pic.jpg)";
             });
     });
 }

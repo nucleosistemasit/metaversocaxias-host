@@ -35,20 +35,22 @@ chatDiv.scrollTo({
 scrollToBottomBtn.addEventListener("click", scrollToBottom);
 
 //
-/* Esconde o botão quando já estiver no final do chat*/
+/* Comportamento do scroll do chat*/
 //
 
 chatDiv.onscroll = function() {scrollCheck()}
   
 function scrollCheck () { 
 
-maxY = chatDiv.scrollHeight;
-scrollPosition = chatDiv.scrollTop;
+  maxY = chatDiv.scrollHeight;
+  scrollPosition = chatDiv.scrollTop;
 
-if (scrollPosition > (maxY/1.5)){
-  scrollToBottomBtn.classList.add("btn-off"); 
-  } else {
-    scrollToBottomBtn.classList.remove("btn-off"); 
+  // Ativa ou desativa o botão de scroll para o rodapé dependendo da posição do scroll na página
+  if (scrollPosition > (maxY - 1000)){
+    scrollToBottomBtn.classList.add("btn-off");
+  } 
+  else {
+    scrollToBottomBtn.classList.remove("btn-off");
   }
 };
 
@@ -56,7 +58,7 @@ if (scrollPosition > (maxY/1.5)){
 /* Mudar a image de perfil */
 //
 
-function pictureEdit () {
-  let pictureMenu = document.getElementById("pictureMenu");
-  pictureMenu.classList.toggle("picture-menu-closed");
-} 
+// function pictureEdit () {
+//   let pictureMenu = document.getElementById("pictureMenu");
+//   pictureMenu.classList.toggle("picture-menu-closed");
+// } 
