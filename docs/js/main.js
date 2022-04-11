@@ -172,7 +172,8 @@ async function starthost() {
     }
 
     let authToken = localStorage.getItem('authToken');
-    chatSocket = new ReconnectingWebSocket('ws://127.0.0.1:8000/ws/chat/talk/?token=' + authToken);
+    chatSocket = new ReconnectingWebSocket('wss://metaversochat.youbot.us/ws/chat/talk/?token=' + authToken);
+    // chatSocket = new ReconnectingWebSocket('ws://127.0.0.1:8000/ws/chat/talk/?token=' + authToken);
 
     chatSocket.onopen = function(e) {
         document.getElementById("status").innerHTML = "Online";
