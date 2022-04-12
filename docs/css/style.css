@@ -506,6 +506,7 @@ audio {
     top: -30px;
     left: -30px;
     color: #5c5c5c;
+    width: max-content;
 }
 
 /* width */
