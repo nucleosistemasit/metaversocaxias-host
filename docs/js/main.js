@@ -157,18 +157,23 @@ function toggleReaction(element) {
     }
 }
 
+function makeid(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * 
+            charactersLength));
+    }
+    return result;
+}
+
 async function starthost() {
     document.getElementById("start-connection").disabled = true;
+
     if (mediaStream == null) {
         mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
         audioDeviceId = mediaStream.getAudioTracks()[0].getSettings().deviceId;
-    }
-    if (rc && rc.isOpen()) {
-        console.log('Already connected to a room');
-    } 
-    else {
-        rc = new RoomClient(null, null, null, window.mediasoupClient, socket,
-            "metaversosul-nucleo-1", "metaversosul-nucleo-1-host", startAudioStream);
     }
 
     let authToken = localStorage.getItem('authToken');
@@ -336,6 +341,23 @@ chatSocket.onmessage = function(e) {
         if (data.permissions.includes('chat.can_control_microphone')) {
             document.getElementById("mic-header").style.display = '';
             document.getElementById("toggle-mic").style.display = '';
+
+            if (rc && rc.isOpen()) {
+                console.log('Already connected to a room');
+            } 
+            else {
+                rc = new RoomClient(null, null, null, window.mediasoupClient, socket,
+                    "metaversosul-nucleo-1", "metaversosul-nucleo-1-host", startAudioStream);
+            }
+        }
+        else {
+            if (rc && rc.isOpen()) {
+                console.log('Already connected to a room');
+            } 
+            else {
+                rc = new RoomClient(null, null, document.body, window.mediasoupClient, socket,
+                    'metaversosul-nucleo-1', 'metaversosul-nucleo-1-' + makeid(64), function(){});
+            }
         }
         if (data.permissions.includes('chat.can_control_presentation_slides')) {
             document.getElementById("animation-header").style.display = '';
