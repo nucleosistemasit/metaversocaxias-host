@@ -17,7 +17,7 @@ function login() {
   let password = document.getElementById("password-input").value;
   let headers = {"Content-Type": "application/json", "Accept": "application/json"};
   // fetch('http://localhost:8000/api/login/', {
-  fetch('wss://metaversochat.youbot.us/api/login/', {
+  fetch('https://metaversochat.youbot.us/api/login/', {
     method: 'POST',
     body: JSON.stringify({"username": username, "password": password}),
     headers: headers

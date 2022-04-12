@@ -472,7 +472,7 @@ chatSocket.onmessage = function(e) {
     });
 
     exportCSV.addEventListener("click", function() {
-        const url = 'wss://metaversochat.youbot.us/api/export-chat/';
+        const url = 'https://metaversochat.youbot.us/api/export-chat/';
         const authHeader = 'Bearer ' + localStorage.getItem('authToken');
         const options = {
             headers: {
@@ -491,7 +491,7 @@ chatSocket.onmessage = function(e) {
         if (event.target.files && event.target.files[0]) {
             const formData = new FormData();
             formData.append('profile_picture', event.target.files[0]);
-            const url = 'wss://metaversochat.youbot.us/api/profile-picture/';
+            const url = 'https://metaversochat.youbot.us/api/profile-picture/';
             const authHeader = 'Bearer ' + localStorage.getItem('authToken');
             const options = {
                 method: "POST",
@@ -510,7 +510,7 @@ chatSocket.onmessage = function(e) {
     });
 
     deletePicture.addEventListener("click", function() {
-        const url = 'wss://metaversochat.youbot.us/api/profile-picture/';
+        const url = 'https://metaversochat.youbot.us/api/profile-picture/';
         const authHeader = 'Bearer ' + localStorage.getItem('authToken');
         const options = {
             method: "DELETE",
