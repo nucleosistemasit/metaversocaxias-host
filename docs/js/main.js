@@ -429,6 +429,7 @@ chatSocket.onmessage = function(e) {
     previousButton.addEventListener("click", function() {
     // Host envia "voltar slide"
         chatSocket.send(JSON.stringify({"command": "control", content: 'previous', name: 'slideChange'}));
+        slideIndex--;
     });
   
     nextButton.addEventListener("click", function() {
