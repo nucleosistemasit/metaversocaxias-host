@@ -505,8 +505,13 @@ chatSocket.onmessage = function(e) {
         fetch(url, options)
             .then( res => res.blob() )
             .then( blob => {
-                let file = window.URL.createObjectURL(blob);
-                window.location.assign(file);
+                let url = window.URL.createObjectURL(blob);
+                let a = document.createElement('a');
+                a.href = url;
+                a.download = 'mensagens.csv';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
             });
     });
 
