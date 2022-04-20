@@ -336,6 +336,7 @@ chatSocket.onmessage = function(e) {
             var loopInterval = setInterval(function() {
                 chatSocket.send(JSON.stringify({"command": "control", content: slideIndex, name: 'slideSet'}));
                 chatSocket.send(JSON.stringify({"command": "control", content: hostIndex, name: 'changeHost'}));
+                chatSocket.send(JSON.stringify({"command": "control", content: micStatus, name: 'toggleMic'}));
             }, 5000);
         }
         if (data.permissions.includes('chat.can_control_microphone')) {
