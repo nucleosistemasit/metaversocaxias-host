@@ -71,6 +71,7 @@ script.onload = () => {
         document.getElementById("palestrante-4").disabled = false;
         document.getElementById("stopTalk").disabled = false;
         document.getElementById("download-csv").disabled = false;
+        document.getElementById("activate-exhibition").disabled = false;
 //           fullscreenButton.onclick = () => {
 //             unityInstance.SetFullscreen(1);
 //           };
@@ -332,6 +333,7 @@ chatSocket.onmessage = function(e) {
             document.getElementById("slide-header").style.display = '';
             document.getElementById("previous-slide").style.display = '';
             document.getElementById("next-slide").style.display = '';
+            document.getElementById("activate-exhibition").style.display = '';
 
             var loopInterval = setInterval(function() {
                 chatSocket.send(JSON.stringify({"command": "control", content: slideIndex, name: 'slideSet'}));
@@ -469,6 +471,7 @@ chatSocket.onmessage = function(e) {
     const exportCSV = document.getElementById("download-csv");
     const pictureInput = document.getElementById("picture-input");
     const deletePicture = document.getElementById("delete-picture");
+    const showExhibitionLink = document.getElementById("activate-exhibition");
 
     palestrante1.addEventListener("click", function() {
         hostIndex = 0;
@@ -493,6 +496,10 @@ chatSocket.onmessage = function(e) {
     stopTalk.addEventListener("click", function() {
         hostIndex = -1;
         chatSocket.send(JSON.stringify({"command": "control", content: -1, name: 'changeHost'}));
+    });
+
+    showExhibitionLink.addEventListener("click", function() {
+        chatSocket.send(JSON.stringify({"command": "control", content: true, name: 'showExhibitionLink'}));
     });
 
     exportCSV.addEventListener("click", function() {
