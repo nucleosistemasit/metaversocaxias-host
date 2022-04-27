@@ -1,7 +1,7 @@
 var buildUrl = "../docs/Build";
 var loaderUrl = buildUrl + "/AuditorioSeniorWebGLVideo.loader.js";
 var config = {
-    dataUrl: buildUrl + "/AuditorioSeniorWebGVideoL.data",
+    dataUrl: buildUrl + "/AuditorioSeniorWebGLVideo.data",
     frameworkUrl: buildUrl + "/AuditorioSeniorWebGLVideo.framework.js",
     codeUrl: buildUrl + "/AuditorioSeniorWebGLVideo.wasm",
     streamingAssetsUrl: "StreamingAssets",
