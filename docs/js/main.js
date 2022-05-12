@@ -1,9 +1,9 @@
 var buildUrl = "../docs/Build";
-var loaderUrl = buildUrl + "/AuditorioSeniorWebGLVideo.loader.js";
+var loaderUrl = buildUrl + "/WebGL.loader.js";
 var config = {
-    dataUrl: buildUrl + "/AuditorioSeniorWebGLVideo.data",
-    frameworkUrl: buildUrl + "/AuditorioSeniorWebGLVideo.framework.js",
-    codeUrl: buildUrl + "/AuditorioSeniorWebGLVideo.wasm",
+    dataUrl: buildUrl + "/WebGL.data",
+    frameworkUrl: buildUrl + "/WebGL.framework.js",
+    codeUrl: buildUrl + "/WebGL.wasm",
     streamingAssetsUrl: "StreamingAssets",
     companyName: "Núcleo",
     productName: "Metaverso Caxias",
@@ -54,6 +54,7 @@ var producer = null;
 var rc = null;
 var current_page = 1;
 var chatSocket = null;
+var heartbeat = null;
 script.src = loaderUrl;
 script.onload = () => {
     createUnityInstance(canvas, config, (progress) => {
@@ -158,6 +159,21 @@ function toggleReaction(element) {
     }
 }
 
+function startHeartbeat() {
+    heartbeat = setInterval(function() {
+        chatSocket.send(JSON.stringify({"command": "heartbeat"}));
+    }, 30000);
+}
+
+function stopHeartbeat() {
+    clearInterval(heartbeat);
+}
+
+function logout() {
+    localStorage.removeItem('authToken');
+    document.location.href = '/';
+}
+
 function makeid(length) {
     var result = '';
     var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -182,6 +198,7 @@ async function starthost() {
     // chatSocket = new ReconnectingWebSocket('ws://127.0.0.1:8000/ws/chat/talk/?token=' + authToken);
 
     chatSocket.onopen = function(e) {
+        startHeartbeat();
         document.getElementById("status").innerHTML = "Online";
         document.getElementById("status").classList.add('conn-on');
         document.getElementById("status").classList.remove('conn-off');
@@ -399,6 +416,7 @@ chatSocket.onmessage = function(e) {
 
     chatSocket.onclose = function(e) {
         console.log('host disconnected');
+        stopHeartbeat();
     };        
 
     document.getElementById('toggle-mic').addEventListener("click", function() {

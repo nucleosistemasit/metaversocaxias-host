@@ -15,10 +15,10 @@
       <div class="side-panel-toggle" onclick="toggleChat()"><i class="fas fa-angle-left"></i></div>
       <div class="banner row"></div>
       <div class="row dash-name">
-        <div class="col-3 text-center">
+        <div class="col-2 text-center">
           <span id="status" class="conn-off align-middle">Offline</span>
         </div>
-        <div class="col-2 text-center">
+        <div class="col-4 text-center">
           <span id="host-picture" class="profile-picture align-middle">
             <div id="pictureMenu" class="picture-menu picture-menu-closed col-12">
               <label for="picture-input" class="picture-input-label">Editar</label>
@@ -27,13 +27,14 @@
               <button id="delete-picture" class="delete-picture"></button>
             </div> 
           </span>
-        </div>
-        <div class="col-3 text-center">
           <span id="host-name" class="align-middle"></span>
         </div>
         <div class="col-4 text-center">
           <label for="conexoes" class="align-middle"><strong>Conexões: </strong></label>
           <span id="conexoes" class="align-middle">0</span>
+        </div>
+        <div class="col-2 text-center">
+          <button id="logout-button" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i></button>
         </div>
       </div>
       <div id="chat" class="row chat chat-client">	
