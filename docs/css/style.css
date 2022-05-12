@@ -59,6 +59,11 @@ body {
     /* width: 0vw; */
 }
 
+#logout-button {
+    background: none;
+    border: none;
+}
+
 #unity-container.unity-desktop.unity-fullscreen {
     width: 100vw;
     right: 0%;

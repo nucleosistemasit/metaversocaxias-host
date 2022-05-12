@@ -169,6 +169,11 @@ function stopHeartbeat() {
     clearInterval(heartbeat);
 }
 
+function logout() {
+    localStorage.removeItem('authToken');
+    document.location.href = '/';
+}
+
 function makeid(length) {
     var result = '';
     var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
