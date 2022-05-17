@@ -401,7 +401,7 @@ chatSocket.onmessage = function(e) {
         peerNode.classList = "msg-container";
         peerNode.innerHTML = '<p class="p-entered-chat"><strong class="s-entered-chat">' + escapeHtml(data.username) + '</strong> entrou na sala.</p>';
         document.getElementById('chat').appendChild(peerNode);
-        document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+//         document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
     }
     else if (data.type == 'chat_disconnection') {
         connectionCount--;
@@ -410,7 +410,7 @@ chatSocket.onmessage = function(e) {
         peerNode.className = "msg-container";
         peerNode.innerHTML = '<p class="p-exited-chat"><strong class="s-exited-chat">' + escapeHtml(data.username) + '</strong> saiu da sala.</p>';
         document.getElementById('chat').appendChild(peerNode);
-        document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+//         document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
         }
     };
 
