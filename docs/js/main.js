@@ -73,6 +73,7 @@ script.onload = () => {
         document.getElementById("stopTalk").disabled = false;
         document.getElementById("download-csv").disabled = false;
         document.getElementById("activate-exhibition").disabled = false;
+         document.getElementById("activate-video").disabled = false;
 //           fullscreenButton.onclick = () => {
 //             unityInstance.SetFullscreen(1);
 //           };
