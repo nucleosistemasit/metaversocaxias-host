@@ -352,7 +352,8 @@ chatSocket.onmessage = function(e) {
             document.getElementById("slide-header").style.display = '';
             document.getElementById("previous-slide").style.display = '';
             document.getElementById("next-slide").style.display = '';
-            document.getElementById("activate-exhibition").style.display = '';
+            document.getElementById("activate-exhibition").style.display = '';            
+            document.getElementById("activate-video").style.display = '';
 
             var loopInterval = setInterval(function() {
                 chatSocket.send(JSON.stringify({"command": "control", content: slideIndex, name: 'slideSet'}));
