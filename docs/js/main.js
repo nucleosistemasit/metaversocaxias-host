@@ -492,6 +492,7 @@ chatSocket.onmessage = function(e) {
     const pictureInput = document.getElementById("picture-input");
     const deletePicture = document.getElementById("delete-picture");
     const showExhibitionLink = document.getElementById("activate-exhibition");
+    const showVideo = document.getElementById("activate-video");
 
     palestrante1.addEventListener("click", function() {
         hostIndex = 0;
@@ -520,6 +521,11 @@ chatSocket.onmessage = function(e) {
 
     showExhibitionLink.addEventListener("click", function() {
         chatSocket.send(JSON.stringify({"command": "control", content: true, name: 'showExhibitionLink'}));
+    });
+    
+    showVideo.addEventListener("click", function() {
+        chatSocket.send(JSON.stringify({"command": "control", content: true, name: 'showVideo'}));
+        gameInstance.SendMessage('ScriptHandler', 'ShowVideo');
     });
 
     exportCSV.addEventListener("click", function() {
