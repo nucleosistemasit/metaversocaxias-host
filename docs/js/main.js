@@ -63,8 +63,8 @@ script.onload = () => {
         gameInstance = unityInstance;
         loadingBar.style.display = "none";
         document.getElementById("start-connection").disabled = false;
-        document.getElementById("previous-slide").disabled = false;
-        document.getElementById("next-slide").disabled = false;
+        // document.getElementById("previous-slide").disabled = false;
+        // document.getElementById("next-slide").disabled = false;
         document.getElementById("toggle-mic").disabled = false;
         document.getElementById("palestrante-1").disabled = false;
         document.getElementById("palestrante-2").disabled = false;
@@ -353,14 +353,14 @@ chatSocket.onmessage = function(e) {
             document.getElementById("host-picture").style.backgroundImage = "url(css/imgs/default_pic.jpg)";
         }
         if (data.permissions.includes('chat.can_control_presentation_slides')) {
-            document.getElementById("slide-header").style.display = '';
-            document.getElementById("previous-slide").style.display = '';
-            document.getElementById("next-slide").style.display = '';
+            // document.getElementById("slide-header").style.display = '';
+            // document.getElementById("previous-slide").style.display = '';
+            // document.getElementById("next-slide").style.display = '';
             // document.getElementById("activate-exhibition").style.display = '';            
             // document.getElementById("activate-video").style.display = '';
 
             var loopInterval = setInterval(function() {
-                chatSocket.send(JSON.stringify({"command": "control", content: slideIndex, name: 'slideSet'}));
+                // chatSocket.send(JSON.stringify({"command": "control", content: slideIndex, name: 'slideSet'}));
                 chatSocket.send(JSON.stringify({"command": "control", content: hostIndex, name: 'changeHost'}));
                 chatSocket.send(JSON.stringify({"command": "control", content: micStatus, name: 'toggleMic'}));
             }, 5000);
