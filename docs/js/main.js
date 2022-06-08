@@ -70,10 +70,13 @@ script.onload = () => {
         document.getElementById("palestrante-2").disabled = false;
         document.getElementById("palestrante-3").disabled = false;
         document.getElementById("palestrante-4").disabled = false;
+        document.getElementById("palestrante-5").disabled = false;
+        document.getElementById("palestrante-6").disabled = false;
+        document.getElementById("palestrante-7").disabled = false;
         document.getElementById("stopTalk").disabled = false;
         document.getElementById("download-csv").disabled = false;
-        document.getElementById("activate-exhibition").disabled = false;
-         document.getElementById("activate-video").disabled = false;
+        // document.getElementById("activate-exhibition").disabled = false;
+        //  document.getElementById("activate-video").disabled = false;
 //           fullscreenButton.onclick = () => {
 //             unityInstance.SetFullscreen(1);
 //           };
@@ -353,8 +356,8 @@ chatSocket.onmessage = function(e) {
             document.getElementById("slide-header").style.display = '';
             document.getElementById("previous-slide").style.display = '';
             document.getElementById("next-slide").style.display = '';
-            document.getElementById("activate-exhibition").style.display = '';            
-            document.getElementById("activate-video").style.display = '';
+            // document.getElementById("activate-exhibition").style.display = '';            
+            // document.getElementById("activate-video").style.display = '';
 
             var loopInterval = setInterval(function() {
                 chatSocket.send(JSON.stringify({"command": "control", content: slideIndex, name: 'slideSet'}));
@@ -389,6 +392,9 @@ chatSocket.onmessage = function(e) {
             document.getElementById("palestrante-2").style.display = '';
             document.getElementById("palestrante-3").style.display = '';
             document.getElementById("palestrante-4").style.display = '';
+            document.getElementById("palestrante-5").style.display = '';
+            document.getElementById("palestrante-6").style.display = '';
+            document.getElementById("palestrante-7").style.display = '';
             document.getElementById("stopTalk").style.display = '';
         }
         if (data.permissions.includes('chat.can_export_talk_to_csv')) {
@@ -470,31 +476,34 @@ chatSocket.onmessage = function(e) {
     }
     });
   
-    const previousButton = document.getElementById("previous-slide");
-    const nextButton = document.getElementById("next-slide");
+    // const previousButton = document.getElementById("previous-slide");
+    // const nextButton = document.getElementById("next-slide");
 
-    previousButton.addEventListener("click", function() {
-    // Host envia "voltar slide"
-        chatSocket.send(JSON.stringify({"command": "control", content: 'previous', name: 'slideChange'}));
-        slideIndex--;
-    });
+    // previousButton.addEventListener("click", function() {
+    // // Host envia "voltar slide"
+    //     chatSocket.send(JSON.stringify({"command": "control", content: 'previous', name: 'slideChange'}));
+    //     slideIndex--;
+    // });
   
-    nextButton.addEventListener("click", function() {
-    // Host envia "avançar slide"
-        chatSocket.send(JSON.stringify({"command": "control", content: 'next', name: 'slideChange'}));
-        slideIndex++;
-    });
+    // nextButton.addEventListener("click", function() {
+    // // Host envia "avançar slide"
+    //     chatSocket.send(JSON.stringify({"command": "control", content: 'next', name: 'slideChange'}));
+    //     slideIndex++;
+    // });
 
     const palestrante1 = document.getElementById("palestrante-1");
     const palestrante2 = document.getElementById("palestrante-2");
     const palestrante3 = document.getElementById("palestrante-3");
     const palestrante4 = document.getElementById("palestrante-4");
+    const palestrante5 = document.getElementById("palestrante-5");
+    const palestrante6 = document.getElementById("palestrante-6");
+    const palestrante7 = document.getElementById("palestrante-7");
     const stopTalk = document.getElementById("stopTalk");
     const exportCSV = document.getElementById("download-csv");
     const pictureInput = document.getElementById("picture-input");
     const deletePicture = document.getElementById("delete-picture");
-    const showExhibitionLink = document.getElementById("activate-exhibition");
-    const showVideo = document.getElementById("activate-video");
+    // const showExhibitionLink = document.getElementById("activate-exhibition");
+    // const showVideo = document.getElementById("activate-video");
 
     palestrante1.addEventListener("click", function() {
         hostIndex = 0;
@@ -516,19 +525,34 @@ chatSocket.onmessage = function(e) {
         chatSocket.send(JSON.stringify({"command": "control", content: 3, name: 'changeHost'}));
     });
 
+    palestrante5.addEventListener("click", function() {
+        hostIndex = 4;
+        chatSocket.send(JSON.stringify({"command": "control", content: 4, name: 'changeHost'}));
+    });
+
+    palestrante6.addEventListener("click", function() {
+        hostIndex = 5;
+        chatSocket.send(JSON.stringify({"command": "control", content: 5, name: 'changeHost'}));
+    });
+
+    palestrante7.addEventListener("click", function() {
+        hostIndex = 6;
+        chatSocket.send(JSON.stringify({"command": "control", content: 6, name: 'changeHost'}));
+    });
+
     stopTalk.addEventListener("click", function() {
         hostIndex = -1;
         chatSocket.send(JSON.stringify({"command": "control", content: -1, name: 'changeHost'}));
     });
 
-    showExhibitionLink.addEventListener("click", function() {
-        chatSocket.send(JSON.stringify({"command": "control", content: true, name: 'showExhibitionLink'}));
-    });
+    // showExhibitionLink.addEventListener("click", function() {
+    //     chatSocket.send(JSON.stringify({"command": "control", content: true, name: 'showExhibitionLink'}));
+    // });
     
-    showVideo.addEventListener("click", function() {
-        chatSocket.send(JSON.stringify({"command": "control", content: true, name: 'showVideo'}));
-        gameInstance.SendMessage('ScriptHandler', 'ShowVideo');
-    });
+    // showVideo.addEventListener("click", function() {
+    //     chatSocket.send(JSON.stringify({"command": "control", content: true, name: 'showVideo'}));
+    //     gameInstance.SendMessage('ScriptHandler', 'ShowVideo');
+    // });
 
     exportCSV.addEventListener("click", function() {
         const url = 'https://metaversochat.youbot.us/api/export-chat/';
