@@ -333,8 +333,11 @@ chatSocket.onmessage = function(e) {
         if (data.name != null && data.name == 'slideChange'){
             gameInstance.SendMessage('ScriptHandler', 'SlideChange', data.content);
         }
-        else if (data.name != null && data.name == 'changeHost'){
-            gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', data.content);
+        else if (data.name != null && data.name == 'avatarTalking'){
+            gameInstance.SendMessage('ScriptHandler', 'AvatarTalking', data.content);
+        }
+        else if (data.name != null && data.name == 'avatarIdle'){
+            gameInstance.SendMessage('ScriptHandler', 'AvatarIdle', data.content);
         }
         else if (data.name != null && data.name == 'slideSet'){
             if (data.content >= 0) {
@@ -361,8 +364,13 @@ chatSocket.onmessage = function(e) {
 
             var loopInterval = setInterval(function() {
                 // chatSocket.send(JSON.stringify({"command": "control", content: slideIndex, name: 'slideSet'}));
-                for (const index of hostIndex) {
-                    chatSocket.send(JSON.stringify({"command": "control", content: index, name: 'changeHost'}));
+                for (const index of [0, 1, 2, 3, 4, 5, 6]) {
+                    if (hostIndex.includes(index) {
+                        chatSocket.send(JSON.stringify({"command": "control", content: index, name: 'avatarTalking'}));
+                    }
+                    else {
+                        chatSocket.send(JSON.stringify({"command": "control", content: index, name: 'avatarIdle'}));
+                    }
                 }
                 chatSocket.send(JSON.stringify({"command": "control", content: micStatus, name: 'toggleMic'}));
             }, 5000);
@@ -511,82 +519,91 @@ chatSocket.onmessage = function(e) {
         let elementIndex = hostIndex.indexOf(0);
         if (elementIndex === -1) {
             hostIndex.push(0);
+            chatSocket.send(JSON.stringify({"command": "control", content: 0, name: 'avatarTalking'}));
         }
         else {
             hostIndex.splice(elementIndex, 1);
+            chatSocket.send(JSON.stringify({"command": "control", content: 0, name: 'avatarIdle'}));
         }
-        chatSocket.send(JSON.stringify({"command": "control", content: 0, name: 'changeHost'}));
     });
 
     palestrante2.addEventListener("click", function() {
         let elementIndex = hostIndex.indexOf(1);
         if (elementIndex === -1) {
             hostIndex.push(1);
+            chatSocket.send(JSON.stringify({"command": "control", content: 1, name: 'avatarTalking'}));
         }
         else {
             hostIndex.splice(elementIndex, 1);
+            chatSocket.send(JSON.stringify({"command": "control", content: 1, name: 'avatarIdle'}));
         }
-        chatSocket.send(JSON.stringify({"command": "control", content: 1, name: 'changeHost'}));
     });
 
     palestrante3.addEventListener("click", function() {
         let elementIndex = hostIndex.indexOf(2);
         if (elementIndex === -1) {
             hostIndex.push(2);
+            chatSocket.send(JSON.stringify({"command": "control", content: 2, name: 'avatarTalking'}));
         }
         else {
             hostIndex.splice(elementIndex, 1);
+            chatSocket.send(JSON.stringify({"command": "control", content: 2, name: 'avatarIdle'}));
         }
-        chatSocket.send(JSON.stringify({"command": "control", content: 2, name: 'changeHost'}));
     });
 
     palestrante4.addEventListener("click", function() {
         let elementIndex = hostIndex.indexOf(3);
         if (elementIndex === -1) {
             hostIndex.push(3);
+            chatSocket.send(JSON.stringify({"command": "control", content: 3, name: 'avatarTalking'}));
         }
         else {
             hostIndex.splice(elementIndex, 1);
+            chatSocket.send(JSON.stringify({"command": "control", content: 3, name: 'avatarIdle'}));
         }
-        chatSocket.send(JSON.stringify({"command": "control", content: 3, name: 'changeHost'}));
     });
 
     palestrante5.addEventListener("click", function() {
         let elementIndex = hostIndex.indexOf(4);
         if (elementIndex === -1) {
             hostIndex.push(4);
+            chatSocket.send(JSON.stringify({"command": "control", content: 4, name: 'avatarTalking'}));
         }
         else {
             hostIndex.splice(elementIndex, 1);
+            chatSocket.send(JSON.stringify({"command": "control", content: 4, name: 'avatarIdle'}));
         }
-        chatSocket.send(JSON.stringify({"command": "control", content: 4, name: 'changeHost'}));
     });
 
     palestrante6.addEventListener("click", function() {
         let elementIndex = hostIndex.indexOf(5);
         if (elementIndex === -1) {
             hostIndex.push(5);
+            chatSocket.send(JSON.stringify({"command": "control", content: 5, name: 'avatarTalking'}));
         }
         else {
             hostIndex.splice(elementIndex, 1);
+            chatSocket.send(JSON.stringify({"command": "control", content: 5, name: 'avatarIdle'}));
         }
-        chatSocket.send(JSON.stringify({"command": "control", content: 5, name: 'changeHost'}));
     });
 
     palestrante7.addEventListener("click", function() {
         let elementIndex = hostIndex.indexOf(6);
         if (elementIndex === -1) {
             hostIndex.push(6);
+            chatSocket.send(JSON.stringify({"command": "control", content: 6, name: 'avatarTalking'}));
         }
         else {
             hostIndex.splice(elementIndex, 1);
+            chatSocket.send(JSON.stringify({"command": "control", content: 6, name: 'avatarIdle'}));
         }
-        chatSocket.send(JSON.stringify({"command": "control", content: 6, name: 'changeHost'}));
     });
 
     stopTalk.addEventListener("click", function() {
+        for (const elementIndex of hostIndex) {
+            chatSocket.send(JSON.stringify({"command": "control", content: elementIndex, name: 'avatarIdle'}));
+        }
         hostIndex.splice(0, hostIndex.length);
-        chatSocket.send(JSON.stringify({"command": "control", content: -1, name: 'changeHost'}));
     });
 
     // showExhibitionLink.addEventListener("click", function() {
