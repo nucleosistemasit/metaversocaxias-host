@@ -365,7 +365,7 @@ chatSocket.onmessage = function(e) {
             var loopInterval = setInterval(function() {
                 // chatSocket.send(JSON.stringify({"command": "control", content: slideIndex, name: 'slideSet'}));
                 for (const index of [0, 1, 2, 3, 4, 5, 6]) {
-                    if (hostIndex.includes(index) {
+                    if (hostIndex.includes(index)) {
                         chatSocket.send(JSON.stringify({"command": "control", content: index, name: 'avatarTalking'}));
                     }
                     else {
