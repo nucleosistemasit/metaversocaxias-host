@@ -43,7 +43,7 @@ loadingBar.style.display = "block";
 var gameInstance = null;
 var script = document.createElement("script");
 var slideIndex = 0;
-var hostIndex = -1;
+var hostIndex = [];
 var connectionStatus = "DESCONECTADO";
 var connectionCount = 0;
 var micStatus = true;
@@ -361,7 +361,9 @@ chatSocket.onmessage = function(e) {
 
             var loopInterval = setInterval(function() {
                 // chatSocket.send(JSON.stringify({"command": "control", content: slideIndex, name: 'slideSet'}));
-                chatSocket.send(JSON.stringify({"command": "control", content: hostIndex, name: 'changeHost'}));
+                for (const index of hostIndex) {
+                    chatSocket.send(JSON.stringify({"command": "control", content: index, name: 'changeHost'}));
+                }
                 chatSocket.send(JSON.stringify({"command": "control", content: micStatus, name: 'toggleMic'}));
             }, 5000);
         }
@@ -506,42 +508,84 @@ chatSocket.onmessage = function(e) {
     // const showVideo = document.getElementById("activate-video");
 
     palestrante1.addEventListener("click", function() {
-        hostIndex = 0;
+        let elementIndex = hostIndex.indexOf(0);
+        if (elementIndex === -1) {
+            hostIndex.push(0);
+        }
+        else {
+            hostIndex.splice(elementIndex, 1);
+        }
         chatSocket.send(JSON.stringify({"command": "control", content: 0, name: 'changeHost'}));
     });
 
     palestrante2.addEventListener("click", function() {
-        hostIndex = 1;
+        let elementIndex = hostIndex.indexOf(1);
+        if (elementIndex === -1) {
+            hostIndex.push(1);
+        }
+        else {
+            hostIndex.splice(elementIndex, 1);
+        }
         chatSocket.send(JSON.stringify({"command": "control", content: 1, name: 'changeHost'}));
     });
 
     palestrante3.addEventListener("click", function() {
-        hostIndex = 2;
+        let elementIndex = hostIndex.indexOf(2);
+        if (elementIndex === -1) {
+            hostIndex.push(2);
+        }
+        else {
+            hostIndex.splice(elementIndex, 1);
+        }
         chatSocket.send(JSON.stringify({"command": "control", content: 2, name: 'changeHost'}));
     });
 
     palestrante4.addEventListener("click", function() {
-        hostIndex = 3;
+        let elementIndex = hostIndex.indexOf(3);
+        if (elementIndex === -1) {
+            hostIndex.push(3);
+        }
+        else {
+            hostIndex.splice(elementIndex, 1);
+        }
         chatSocket.send(JSON.stringify({"command": "control", content: 3, name: 'changeHost'}));
     });
 
     palestrante5.addEventListener("click", function() {
-        hostIndex = 4;
+        let elementIndex = hostIndex.indexOf(4);
+        if (elementIndex === -1) {
+            hostIndex.push(4);
+        }
+        else {
+            hostIndex.splice(elementIndex, 1);
+        }
         chatSocket.send(JSON.stringify({"command": "control", content: 4, name: 'changeHost'}));
     });
 
     palestrante6.addEventListener("click", function() {
-        hostIndex = 5;
+        let elementIndex = hostIndex.indexOf(5);
+        if (elementIndex === -1) {
+            hostIndex.push(5);
+        }
+        else {
+            hostIndex.splice(elementIndex, 1);
+        }
         chatSocket.send(JSON.stringify({"command": "control", content: 5, name: 'changeHost'}));
     });
 
     palestrante7.addEventListener("click", function() {
-        hostIndex = 6;
+        let elementIndex = hostIndex.indexOf(6);
+        if (elementIndex === -1) {
+            hostIndex.push(6);
+        }
+        else {
+            hostIndex.splice(elementIndex, 1);
+        }
         chatSocket.send(JSON.stringify({"command": "control", content: 6, name: 'changeHost'}));
     });
 
     stopTalk.addEventListener("click", function() {
-        hostIndex = -1;
+        hostIndex.splice(0, hostIndex.length);
         chatSocket.send(JSON.stringify({"command": "control", content: -1, name: 'changeHost'}));
     });
 
