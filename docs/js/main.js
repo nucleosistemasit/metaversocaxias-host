@@ -74,6 +74,8 @@ script.onload = () => {
         document.getElementById("palestrante-5").disabled = false;
         document.getElementById("palestrante-6").disabled = false;
         document.getElementById("palestrante-7").disabled = false;
+        document.getElementById("palestrante-8").disabled = false;
+        document.getElementById("palestrante-9").disabled = false;
         document.getElementById("stopTalk").disabled = false;
         document.getElementById("download-csv").disabled = false;
         // document.getElementById("activate-exhibition").disabled = false;
@@ -406,6 +408,8 @@ chatSocket.onmessage = function(e) {
             document.getElementById("palestrante-5").style.display = '';
             document.getElementById("palestrante-6").style.display = '';
             document.getElementById("palestrante-7").style.display = '';
+            document.getElementById("palestrante-8").style.display = '';
+            document.getElementById("palestrante-9").style.display = '';
             document.getElementById("stopTalk").style.display = '';
         }
         if (data.permissions.includes('chat.can_export_talk_to_csv')) {
@@ -509,6 +513,8 @@ chatSocket.onmessage = function(e) {
     const palestrante5 = document.getElementById("palestrante-5");
     const palestrante6 = document.getElementById("palestrante-6");
     const palestrante7 = document.getElementById("palestrante-7");
+    const palestrante7 = document.getElementById("palestrante-8");
+    const palestrante7 = document.getElementById("palestrante-9");
     const stopTalk = document.getElementById("stopTalk");
     const exportCSV = document.getElementById("download-csv");
     const pictureInput = document.getElementById("picture-input");
@@ -597,6 +603,30 @@ chatSocket.onmessage = function(e) {
         else {
             hostIndex.splice(elementIndex, 1);
             chatSocket.send(JSON.stringify({"command": "control", content: 6, name: 'avatarIdle'}));
+        }
+    });
+    
+    palestrante8.addEventListener("click", function() {
+        let elementIndex = hostIndex.indexOf(7);
+        if (elementIndex === -1) {
+            hostIndex.push(7);
+            chatSocket.send(JSON.stringify({"command": "control", content: 7, name: 'avatarTalking'}));
+        }
+        else {
+            hostIndex.splice(elementIndex, 1);
+            chatSocket.send(JSON.stringify({"command": "control", content: 7, name: 'avatarIdle'}));
+        }
+    });
+    
+    palestrante9.addEventListener("click", function() {
+        let elementIndex = hostIndex.indexOf(8);
+        if (elementIndex === -1) {
+            hostIndex.push(8);
+            chatSocket.send(JSON.stringify({"command": "control", content: 8, name: 'avatarTalking'}));
+        }
+        else {
+            hostIndex.splice(elementIndex, 1);
+            chatSocket.send(JSON.stringify({"command": "control", content: 8, name: 'avatarIdle'}));
         }
     });
 
