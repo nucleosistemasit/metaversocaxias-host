@@ -65,8 +65,8 @@ script.onload = () => {
         gameInstance = unityInstance;
         loadingBar.style.display = "none";
         document.getElementById("start-connection").disabled = false;
-        // document.getElementById("previous-slide").disabled = false;
-        // document.getElementById("next-slide").disabled = false;
+        document.getElementById("previous-slide").disabled = false;
+        document.getElementById("next-slide").disabled = false;
         document.getElementById("toggle-mic").disabled = false;
         document.getElementById("palestrante-1").disabled = false;
 //         document.getElementById("palestrante-2").disabled = false;
