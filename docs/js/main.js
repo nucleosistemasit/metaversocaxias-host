@@ -1,10 +1,11 @@
 var buildUrl = "../docs/Build";
-var loaderUrl = buildUrl + "/WebGL.loader.js";
+var builString = "WebGL_Pedro"
+var loaderUrl = buildUrl + "/" + builString + ".loader.js";
 var config = {
     // dataUrl: "https://agoravirtual-bucket.s3.us-west-2.amazonaws.com/AudienciaWebGLBuild.data",
-    dataUrl: buildUrl + "/WebGL.data",
-    frameworkUrl: buildUrl + "/WebGL.framework.js",
-    codeUrl: buildUrl + "/WebGL.wasm",
+    dataUrl: buildUrl +  "/" + builString + ".data",
+    frameworkUrl: buildUrl +  "/" + builString + ".framework.js",
+    codeUrl: buildUrl +  "/" + builString + ".wasm",
     streamingAssetsUrl: "StreamingAssets",
     companyName: "Núcleo",
     productName: "Metaverso Caxias",
@@ -64,8 +65,8 @@ script.onload = () => {
         gameInstance = unityInstance;
         loadingBar.style.display = "none";
         document.getElementById("start-connection").disabled = false;
-        // document.getElementById("previous-slide").disabled = false;
-        // document.getElementById("next-slide").disabled = false;
+        document.getElementById("previous-slide").disabled = false;
+        document.getElementById("next-slide").disabled = false;
         document.getElementById("toggle-mic").disabled = false;
         document.getElementById("palestrante-1").disabled = false;
 //         document.getElementById("palestrante-2").disabled = false;
@@ -337,7 +338,8 @@ chatSocket.onmessage = function(e) {
             gameInstance.SendMessage('ScriptHandler', 'SlideChange', data.content);
         }
         else if (data.name != null && data.name == 'avatarTalking'){
-            gameInstance.SendMessage('ScriptHandler', 'AvatarTalking', data.content);
+//             gameInstance.SendMessage('ScriptHandler', 'AvatarTalking', data.content);
+            gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', data.content);
         }
         else if (data.name != null && data.name == 'avatarIdle'){
             gameInstance.SendMessage('ScriptHandler', 'AvatarIdle', data.content);
@@ -359,9 +361,9 @@ chatSocket.onmessage = function(e) {
             document.getElementById("host-picture").style.backgroundImage = "url(css/imgs/default_pic.jpg)";
         }
         if (data.permissions.includes('chat.can_control_presentation_slides')) {
-            // document.getElementById("slide-header").style.display = '';
-            // document.getElementById("previous-slide").style.display = '';
-            // document.getElementById("next-slide").style.display = '';
+            document.getElementById("slide-header").style.display = '';
+            document.getElementById("previous-slide").style.display = '';
+            document.getElementById("next-slide").style.display = '';
             // document.getElementById("activate-exhibition").style.display = '';            
             // document.getElementById("activate-video").style.display = '';
 
