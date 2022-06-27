@@ -361,9 +361,9 @@ chatSocket.onmessage = function(e) {
             document.getElementById("host-picture").style.backgroundImage = "url(css/imgs/default_pic.jpg)";
         }
         if (data.permissions.includes('chat.can_control_presentation_slides')) {
-            // document.getElementById("slide-header").style.display = '';
-            // document.getElementById("previous-slide").style.display = '';
-            // document.getElementById("next-slide").style.display = '';
+            document.getElementById("slide-header").style.display = '';
+            document.getElementById("previous-slide").style.display = '';
+            document.getElementById("next-slide").style.display = '';
             // document.getElementById("activate-exhibition").style.display = '';            
             // document.getElementById("activate-video").style.display = '';
 
