@@ -493,20 +493,20 @@ chatSocket.onmessage = function(e) {
     }
     });
   
-    // const previousButton = document.getElementById("previous-slide");
-    // const nextButton = document.getElementById("next-slide");
+    const previousButton = document.getElementById("previous-slide");
+    const nextButton = document.getElementById("next-slide");
 
-    // previousButton.addEventListener("click", function() {
-    // // Host envia "voltar slide"
-    //     chatSocket.send(JSON.stringify({"command": "control", content: 'previous', name: 'slideChange'}));
-    //     slideIndex--;
-    // });
+    previousButton.addEventListener("click", function() {
+    // Host envia "voltar slide"
+        chatSocket.send(JSON.stringify({"command": "control", content: 'previous', name: 'slideChange'}));
+        slideIndex--;
+    });
   
-    // nextButton.addEventListener("click", function() {
-    // // Host envia "avançar slide"
-    //     chatSocket.send(JSON.stringify({"command": "control", content: 'next', name: 'slideChange'}));
-    //     slideIndex++;
-    // });
+    nextButton.addEventListener("click", function() {
+    // Host envia "avançar slide"
+        chatSocket.send(JSON.stringify({"command": "control", content: 'next', name: 'slideChange'}));
+        slideIndex++;
+    });
 
     const palestrante1 = document.getElementById("palestrante-1");
 //     const palestrante2 = document.getElementById("palestrante-2");
