@@ -338,11 +338,12 @@ chatSocket.onmessage = function(e) {
             gameInstance.SendMessage('ScriptHandler', 'SlideChange', data.content);
         }
         else if (data.name != null && data.name == 'avatarTalking'){
-//             gameInstance.SendMessage('ScriptHandler', 'AvatarTalking', data.content);
-            gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', data.content);
+            gameInstance.SendMessage('ScriptHandler', 'AvatarTalking', data.content);
+//             gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', data.content);
         }
         else if (data.name != null && data.name == 'avatarIdle'){
             gameInstance.SendMessage('ScriptHandler', 'AvatarIdle', data.content);
+//             gameInstance.SendMessage('ScriptHandler', 'WhichPalestranteWillTalk', data.content);
         }
         else if (data.name != null && data.name == 'slideSet'){
             if (data.content >= 0) {
