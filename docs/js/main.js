@@ -80,7 +80,7 @@ script.onload = () => {
         document.getElementById("stopTalk").disabled = false;
         document.getElementById("download-csv").disabled = false;
         // document.getElementById("activate-exhibition").disabled = false;
-        //  document.getElementById("activate-video").disabled = false;
+         document.getElementById("activate-video").disabled = false;
 //           fullscreenButton.onclick = () => {
 //             unityInstance.SetFullscreen(1);
 //           };
@@ -366,7 +366,7 @@ chatSocket.onmessage = function(e) {
             document.getElementById("previous-slide").style.display = '';
             document.getElementById("next-slide").style.display = '';
             // document.getElementById("activate-exhibition").style.display = '';            
-            // document.getElementById("activate-video").style.display = '';
+            document.getElementById("activate-video").style.display = '';
 
             var loopInterval = setInterval(function() {
                 chatSocket.send(JSON.stringify({"command": "control", content: slideIndex, name: 'slideSet'}));
@@ -523,7 +523,7 @@ chatSocket.onmessage = function(e) {
     const pictureInput = document.getElementById("picture-input");
     const deletePicture = document.getElementById("delete-picture");
     // const showExhibitionLink = document.getElementById("activate-exhibition");
-    // const showVideo = document.getElementById("activate-video");
+    const showVideo = document.getElementById("activate-video");
 
     palestrante1.addEventListener("click", function() {
         let elementIndex = hostIndex.indexOf(0);
@@ -644,10 +644,10 @@ chatSocket.onmessage = function(e) {
     //     chatSocket.send(JSON.stringify({"command": "control", content: true, name: 'showExhibitionLink'}));
     // });
     
-    // showVideo.addEventListener("click", function() {
-    //     chatSocket.send(JSON.stringify({"command": "control", content: true, name: 'showVideo'}));
-    //     gameInstance.SendMessage('ScriptHandler', 'ShowVideo');
-    // });
+    showVideo.addEventListener("click", function() {
+        chatSocket.send(JSON.stringify({"command": "control", content: true, name: 'showVideo'}));
+        gameInstance.SendMessage('ScriptHandler', 'ShowVideo');
+    });
 
     exportCSV.addEventListener("click", function() {
         const url = 'https://metaversochat.youbot.us/api/export-chat/';
