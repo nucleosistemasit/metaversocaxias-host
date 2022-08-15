@@ -549,17 +549,17 @@ chatSocket.onmessage = function(e) {
         }
     });
 
-//     palestrante3.addEventListener("click", function() {
-//         let elementIndex = hostIndex.indexOf(2);
-//         if (elementIndex === -1) {
-//             hostIndex.push(2);
-//             chatSocket.send(JSON.stringify({"command": "control", content: 2, name: 'avatarTalking'}));
-//         }
-//         else {
-//             hostIndex.splice(elementIndex, 1);
-//             chatSocket.send(JSON.stringify({"command": "control", content: 2, name: 'avatarIdle'}));
-//         }
-//     });
+    palestrante3.addEventListener("click", function() {
+        let elementIndex = hostIndex.indexOf(2);
+        if (elementIndex === -1) {
+            hostIndex.push(2);
+            chatSocket.send(JSON.stringify({"command": "control", content: 2, name: 'avatarTalking'}));
+        }
+        else {
+            hostIndex.splice(elementIndex, 1);
+            chatSocket.send(JSON.stringify({"command": "control", content: 2, name: 'avatarIdle'}));
+        }
+    });
 
 //     palestrante4.addEventListener("click", function() {
 //         let elementIndex = hostIndex.indexOf(3);
