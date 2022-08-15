@@ -70,7 +70,7 @@ script.onload = () => {
         document.getElementById("toggle-mic").disabled = false;
         document.getElementById("palestrante-1").disabled = false;
         document.getElementById("palestrante-2").disabled = false;
-//         document.getElementById("palestrante-3").disabled = false;
+        document.getElementById("palestrante-3").disabled = false;
 //         document.getElementById("palestrante-4").disabled = false;
 //         document.getElementById("palestrante-5").disabled = false;
 //         document.getElementById("palestrante-6").disabled = false;
@@ -406,7 +406,7 @@ chatSocket.onmessage = function(e) {
             document.getElementById("animation-header").style.display = '';
             document.getElementById("palestrante-1").style.display = '';
             document.getElementById("palestrante-2").style.display = '';
-//             document.getElementById("palestrante-3").style.display = '';
+            document.getElementById("palestrante-3").style.display = '';
 //             document.getElementById("palestrante-4").style.display = '';
 //             document.getElementById("palestrante-5").style.display = '';
 //             document.getElementById("palestrante-6").style.display = '';
@@ -511,7 +511,7 @@ chatSocket.onmessage = function(e) {
 
     const palestrante1 = document.getElementById("palestrante-1");
     const palestrante2 = document.getElementById("palestrante-2");
-//     const palestrante3 = document.getElementById("palestrante-3");
+    const palestrante3 = document.getElementById("palestrante-3");
 //     const palestrante4 = document.getElementById("palestrante-4");
 //     const palestrante5 = document.getElementById("palestrante-5");
 //     const palestrante6 = document.getElementById("palestrante-6");
