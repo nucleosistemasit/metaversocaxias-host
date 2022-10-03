@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Ágora Virtual</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">    
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/fontawesome/all.min.css" >
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+    <div id="sidePanel" class="side-panel container-fluid">
+      <div class="side-panel-toggle" onclick="toggleChat()"><i class="fas fa-angle-left"></i></div>
+      <div class="banner row"></div>
+      <div class="row dash-name">
+        <div class="col-2 text-center">
+          <span id="status" class="conn-off align-middle">Offline</span>
+        </div>
+        <div class="col-4 text-center">
+          <span id="host-picture" class="profile-picture align-middle">
+            <div id="pictureMenu" class="picture-menu picture-menu-closed col-12">
+              <label for="picture-input" class="picture-input-label">Editar</label>
+              <input id="picture-input" type="file" accept="image/png, image/jpeg, image/jpg"/>
+              <label for="delete-picture" class="picture-delete-label">Excluir</label>
+              <button id="delete-picture" class="delete-picture"></button>
+            </div> 
+          </span>
+          <span id="host-name" class="align-middle"></span>
+        </div>
+        <div class="col-4 text-center">
+          <label for="conexoes" class="align-middle"><strong>Conexões: </strong></label>
+          <span id="conexoes" class="align-middle">0</span>
+        </div>
+        <div class="col-2 text-center">
+          <button id="logout-button" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+      </div>
+      <div id="chat" class="row chat chat-client">	
+        <span id="scrollToBottomBtn" class="scroll-to-bottom-btn"><i class="fas fa-caret-down"></i></span>
+      </div>
+      <div id="replyPreview" class="reply-preview reply-off" data-id="">
+        <strong id="sReplyChat" class="s-reply-chat"></strong>
+        <span class="reply-close"><i class="fas fa-close" onclick="closeReply()"></i></span>
+        <span id="replyChat" class="reply-chat">          
+        </span>
+      </div>
+      <div class="row msg-box">
+        <textarea id="message-content" class="type-msg col-10" placeholder="Mensagem..."></textarea>
+        <button id="send-message" class="col-2 btn btn-send-msg"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+    <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+      <div id="unity-mobile-warning">
+        WebGL builds are not supported on mobile devices.
+      </div>
+      <div id="unity-footer">
+        <div class="container-fluid">
+          <div class="row text-center dash-controlls">
+            <div class="col-2">
+              <span class="header">Conexão</span>
+              <button class="iniciar-host btn btn-primary" id="start-connection" disabled>Conectar</button>
+            </div>
+            <div class="col-2">
+              <span id="slide-header" class="header" style="display: none;">Slides</span>
+              <button id="previous-slide" class="btn btn-slide btn-primary" style="display: none;" disabled><</button>
+              <button id="next-slide" class="btn btn-slide btn-primary" style="display: none;" disabled>></button>
+            </div>
+            <div class="col-1">
+              <span id="mic-header" class="header" style="display: none;">Microfone</span>
+              <button id="toggle-mic" class="btn mic-on btn-primary" style="display: none;" disabled>Ligado</button>
+            </div>
+            <div class="col-3">
+              <span id="animation-header" class="header" style="display: none;">Animação</span>
+              <button id="palestrante-1" class="btn btn-primary" style="display: none;" disabled>1</button>
+              <button id="palestrante-2" class="btn btn-primary" style="display: none;" disabled>2</button>
+              <button id="palestrante-3" class="btn btn-primary" style="display: none;" disabled>3</button>
+              <button id="palestrante-4" class="btn btn-primary" style="display: none;" disabled>4</button>
+              <button id="palestrante-5" class="btn btn-primary" style="display: none;" disabled>5</button>
+              <button id="palestrante-6" class="btn btn-primary" style="display: none;" disabled>6</button>
+              <button id="palestrante-7" class="btn btn-primary" style="display: none;" disabled>7</button>
+              <button id="palestrante-8" class="btn btn-primary" style="display: none;" disabled>8</button>
+              <button id="palestrante-9" class="btn btn-primary" style="display: none;" disabled>9</button>
+              <button id="stopTalk" class="btn btn-primary" style="display: none;" disabled>Parar</button>
+            </div>
+            <div class="col-4">
+              <span id="export-header" class="header" style="display: none;">Controle</span>
+              <button id="activate-video" class="btn btn-slide btn-primary" style="display: none;" disabled>Vídeo</button>
+              <button id="download-csv" class="btn btn-slide btn-primary" style="display: none;" disabled>CSV</button>
+              <!-- <button id="activate-exhibition" class="btn btn-slide btn-primary" style="display: none;" disabled>Link</button> -->
+            </div>
+          </div> 
+        </div>
+      </div>
+    </div>
+    <script src="js/reconnecting-websocket.min.js"></script>
+    <script src="js/linkify.min.js"></script>
+    <script src="js/linkify-html.min.js"></script>
+    <script defer src="js/fontawesome/all.min.js"></script>
+    <script src="js/socket.io.js"></script>
+    <script src="js/mediasoupclient.min.js"></script>
+    <script src="js/EventEmitter.min.js"></script>
+    <script src="js/RoomClient.js"></script>
+    <script src="js/main-unity.js"></script>    
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/js.js"></script>
+  </body>
+</html>
