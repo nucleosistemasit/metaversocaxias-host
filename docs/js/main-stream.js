@@ -5,6 +5,7 @@ var micStatus = true;
 var current_page = 1;
 var chatSocket = null;
 var heartbeat = null;
+var srsSdk = null;
 
 var entityMap = {
     '<': '&lt;',
@@ -81,12 +82,48 @@ function logout() {
     document.location.href = '/';
 }
 
+function publishSrs() {
+    // Close PC when user replay.
+    if (srsSdk) {
+        srsSdk.close();
+    }
+    srsSdk = new SrsRtcPublisherAsync();
+    document.getElementById("rtc_media_player").srcObject = srsSdk.stream;
+
+    var url = 'https://metaversoaudio.youbot.us/live/livestream';
+    srsSdk.publish(url).then(function(session) {
+        console.log('Conectado', session.sessionid);
+    }).catch(function (reason) {
+        // Throw by sdk.
+        if (reason instanceof SrsError) {
+            if (reason.name === 'HttpsRequiredError') {
+                console.log(`HTTPS required error：${reason.name} ${reason.message}`);
+            } else {
+                console.log(`${reason.name} ${reason.message}`);
+            }
+        }
+        // See https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia#exceptions
+        if (reason instanceof DOMException) {
+            if (reason.name === 'NotFoundError') {
+                console.log(`Not found error：getUserMedia ${reason.name} ${reason.message}`);
+            } else if (reason.name === 'NotAllowedError') {
+                console.log(`Not allowed error：getUserMedia ${reason.name} ${reason.message}`);
+            } else if (['AbortError', 'NotAllowedError', 'NotFoundError', 'NotReadableError', 'OverconstrainedError', 'SecurityError', 'TypeError'].includes(reason.name)) {
+                console.log(`getUserMedia ${reason.name} ${reason.message}`);
+            }
+        }
+        srsSdk.close();
+        console.error(reason);
+    });
+}
+
 async function starthost() {
     document.getElementById("start-connection").disabled = true;
 
     let authToken = localStorage.getItem('authToken');
     chatSocket = new ReconnectingWebSocket('wss://metaversochat.youbot.us/ws/chat/talk/?token=' + authToken);
     // chatSocket = new ReconnectingWebSocket('ws://127.0.0.1:8000/ws/chat/talk/?token=' + authToken);
+    publishSrs();
 
     chatSocket.onopen = function(e) {
         startHeartbeat();
