@@ -249,15 +249,15 @@ chatSocket.onmessage = function(e) {
             // document.getElementById("activate-video").style.display = '';
 
             var loopInterval = setInterval(function() {
-                chatSocket.send(JSON.stringify({"command": "control", content: slideIndex, name: 'slideSet'}));
-                for (const index of [0, 1, 2, 3, 4, 5, 6, 7, 8]) {
-                    if (hostIndex.includes(index)) {
-                        chatSocket.send(JSON.stringify({"command": "control", content: index, name: 'avatarTalking'}));
-                    }
-                    else {
-                        chatSocket.send(JSON.stringify({"command": "control", content: index, name: 'avatarIdle'}));
-                    }
-                }
+                // chatSocket.send(JSON.stringify({"command": "control", content: slideIndex, name: 'slideSet'}));
+                // for (const index of [0, 1, 2, 3, 4, 5, 6, 7, 8]) {
+                //     if (hostIndex.includes(index)) {
+                //         chatSocket.send(JSON.stringify({"command": "control", content: index, name: 'avatarTalking'}));
+                //     }
+                //     else {
+                //         chatSocket.send(JSON.stringify({"command": "control", content: index, name: 'avatarIdle'}));
+                //     }
+                // }
                 chatSocket.send(JSON.stringify({"command": "control", content: micStatus, name: 'toggleMic'}));
             }, 5000);
         }
