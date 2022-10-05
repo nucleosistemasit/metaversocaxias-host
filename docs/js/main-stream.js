@@ -353,6 +353,7 @@ chatSocket.onmessage = function(e) {
             document.getElementById("toggle-mic").classList.add('mic-off');
             document.getElementById("toggle-mic").classList.remove('mic-on');
             chatSocket.send(JSON.stringify({"command": "control", content: false, name: 'toggleMic'}));
+            srsSdk.stream.getAudioTracks()[0].enabled = false;
     }
         else {
             // Enable mic
@@ -361,6 +362,7 @@ chatSocket.onmessage = function(e) {
             document.getElementById("toggle-mic").classList.add('mic-on');
             document.getElementById("toggle-mic").classList.remove('mic-off');
             chatSocket.send(JSON.stringify({"command": "control", content: true, name: 'toggleMic'}));
+            srsSdk.stream.getAudioTracks()[0].enabled = true;
     }
     });
 
