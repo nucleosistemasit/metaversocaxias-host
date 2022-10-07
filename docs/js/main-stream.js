@@ -2,6 +2,7 @@ var container = document.querySelector("#unity-container");
 var connectionStatus = "DESCONECTADO";
 var connectionCount = 0;
 var micStatus = true;
+var screenStatus = false;
 var current_page = 1;
 var chatSocket = null;
 var heartbeat = null;
@@ -301,6 +302,8 @@ chatSocket.onmessage = function(e) {
         if (data.permissions.includes('chat.can_control_microphone')) {
             document.getElementById("mic-header").style.display = '';
             document.getElementById("toggle-mic").style.display = '';
+            document.getElementById("video-header").style.display = '';
+            document.getElementById("toggle-screen").style.display = '';
         }
         else {
             // User is not host
@@ -354,7 +357,7 @@ chatSocket.onmessage = function(e) {
             document.getElementById("toggle-mic").classList.remove('mic-on');
             chatSocket.send(JSON.stringify({"command": "control", content: false, name: 'toggleMic'}));
             srsSdk.stream.getAudioTracks()[0].enabled = false;
-    }
+        }
         else {
             // Enable mic
             micStatus = true;
@@ -363,7 +366,26 @@ chatSocket.onmessage = function(e) {
             document.getElementById("toggle-mic").classList.remove('mic-off');
             chatSocket.send(JSON.stringify({"command": "control", content: true, name: 'toggleMic'}));
             srsSdk.stream.getAudioTracks()[0].enabled = true;
-    }
+        }
+    });
+
+    document.getElementById('toggle-screen').addEventListener("click", function() {
+        if (screenStatus == true) {
+            // Disable screen share
+            screenStatus = false;
+            document.getElementById("toggle-screen").innerHTML = "Compartilhar tela";
+            document.getElementById("toggle-screen").classList.add('camera-on');
+            document.getElementById("toggle-screen").classList.remove('screen-on');
+            srsSdk.activateCamera();
+        }
+        else {
+            // Enable screen share
+            screenStatus = true;
+            document.getElementById("toggle-screen").innerHTML = "Parar de compartilhar";
+            document.getElementById("toggle-screen").classList.add('screen-on');
+            document.getElementById("toggle-screen").classList.remove('camera-on');
+            srsSdk.activateScreen();
+        }
     });
 
     const sendButton = document.getElementById("send-message");

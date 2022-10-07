@@ -111,6 +111,50 @@ function SrsRtcPublisherAsync() {
         self.stream.addTrack(event.track);
     };
 
+    self.onremovetrack = function (event) {
+        self.stream.removeTrack(event.track);
+    };
+
+    self.activateCamera = async function () {
+        // If screen was shared, stop all previous tracks
+        self.stream.getTracks().forEach(function (track) {
+            self.pc.removeTrack(track);
+
+            // Notify about local track when stream is ok.
+            self.onremovetrack && self.onremovetrack({track: track});
+        });
+
+        var cameraStream = await navigator.mediaDevices.getUserMedia(self.constraints);
+
+        // Add all tracks again from user media (camera)
+        cameraStream.getTracks().forEach(function (track) {
+            self.pc.addTrack(track);
+
+            // Notify about local track when stream is ok.
+            self.ontrack && self.ontrack({track: track});
+        });
+    };
+
+    self.activateScreen = async function () {
+        // If camera was active, stop all video tracks
+        self.stream.getVideoTracks().forEach(function (track) {
+            self.pc.removeTrack(track);
+
+            // Notify about local track when stream is ok.
+            self.onremovetrack && self.onremovetrack({track: track});
+        });
+
+        var screenStream = await navigator.mediaDevices.getDisplayMedia({video: {cursor: 'always'}, audio: true});
+
+        // Add all tracks from display media (audio and video)
+        screenStream.getTracks().forEach(function (track) {
+            self.pc.addTrack(track);
+
+            // Notify about local track when stream is ok.
+            self.ontrack && self.ontrack({track: track});
+        });
+    };
+
     // Internal APIs.
     self.__internal = {
         defaultPath: '/rtc/v1/publish/',
