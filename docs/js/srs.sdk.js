@@ -125,7 +125,9 @@ function SrsRtcPublisherAsync() {
 
             self.pc.removeTrack(sender);
 
-            sender.track.stop();
+            if (sender.track != null) {}
+                sender.track.stop();
+            }
         });
 
         var cameraStream = await navigator.mediaDevices.getUserMedia(self.constraints);
@@ -146,7 +148,9 @@ function SrsRtcPublisherAsync() {
 
                 self.pc.removeTrack(sender);
 
-                sender.track.stop();
+                if (sender.track != null) {
+                    sender.track.stop();
+                }
             }
         });
 
