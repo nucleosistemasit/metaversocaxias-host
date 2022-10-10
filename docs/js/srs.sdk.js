@@ -162,11 +162,6 @@ function SrsRtcPublisherAsync() {
 
             self.ontrack && self.ontrack({track: track});
         });
-
-        // Add listener for browser UI stop button
-        screenStream.getVideoTracks()[0].addEventListener('ended', () => {
-            self.activateCamera();
-        });
     };
 
     // Internal APIs.
