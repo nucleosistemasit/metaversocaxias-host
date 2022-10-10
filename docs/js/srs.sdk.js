@@ -125,7 +125,7 @@ function SrsRtcPublisherAsync() {
 
             self.pc.removeTrack(sender);
 
-            if (sender.track != null) {}
+            if (sender.track != null) {
                 sender.track.stop();
             }
         });
