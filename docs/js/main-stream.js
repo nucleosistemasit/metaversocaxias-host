@@ -389,11 +389,6 @@ chatSocket.onmessage = function(e) {
             document.getElementById("toggle-screen").classList.add('screen-on');
             document.getElementById("toggle-screen").classList.remove('camera-on');
             srsSdk.activateScreen();
-
-            // Add listener for browser UI stop button
-            srsSdk.stream.getVideoTracks()[0].addEventListener('ended', () => {
-                disableScreenShare();
-            });
         }
     });
 

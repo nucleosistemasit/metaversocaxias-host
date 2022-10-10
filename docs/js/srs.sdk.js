@@ -161,6 +161,13 @@ function SrsRtcPublisherAsync() {
             self.pc.addTrack(track);
 
             self.ontrack && self.ontrack({track: track});
+
+            // Add listener for browser UI stop button
+            if (track.kind == 'video') {
+                track.addEventListener('ended', () => {
+                    disableScreenShare();
+                });
+            }
         });
     };
 
