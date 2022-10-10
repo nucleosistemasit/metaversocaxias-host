@@ -113,7 +113,9 @@ function SrsRtcPublisherAsync() {
 
     self.onremovetrack = function (event) {
         console.log('onremovetrack', event);
-        self.stream.removeTrack(event.track);
+        if (event.track != null) {
+            self.stream.removeTrack(event.track);
+        }
     };
 
     self.activateCamera = async function () {
