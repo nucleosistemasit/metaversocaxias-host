@@ -139,7 +139,7 @@ function SrsRtcPublisherAsync() {
     self.activateScreen = async function () {
         // If camera was active, stop all video tracks
         self.pc.getSenders().forEach(function (sender) {
-            if (sender.track.kind == 'video') {
+            if (sender.track != null && sender.track.kind == 'video') {
                 self.onremovetrack && self.onremovetrack({track: sender.track});
 
                 self.pc.removeTrack(sender);
@@ -153,6 +153,11 @@ function SrsRtcPublisherAsync() {
             self.pc.addTrack(track);
 
             self.ontrack && self.ontrack({track: track});
+        });
+
+        // Add listener for browser UI stop button
+        screenStream.getVideoTracks()[0].addEventListener('ended', () => {
+            self.activateCamera();
         });
     };
 
