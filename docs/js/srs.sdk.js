@@ -112,6 +112,7 @@ function SrsRtcPublisherAsync() {
     };
 
     self.onremovetrack = function (event) {
+        console.log('onremovetrack', event);
         self.stream.removeTrack(event.track);
     };
 
