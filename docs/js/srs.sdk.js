@@ -140,7 +140,7 @@ function SrsRtcPublisherAsync() {
         });
     };
 
-    self.activateScreen = async function () {
+    self.activateScreen = async function (browserCallback) {
         // If camera was active, stop all video tracks
         self.pc.getSenders().forEach(function (sender) {
             if (sender.track != null && sender.track.kind == 'video') {
@@ -165,7 +165,7 @@ function SrsRtcPublisherAsync() {
             // Add listener for browser UI stop button
             if (track.kind == 'video') {
                 track.addEventListener('ended', () => {
-                    disableScreenShare();
+                    browserCallback();
                 });
             }
         });

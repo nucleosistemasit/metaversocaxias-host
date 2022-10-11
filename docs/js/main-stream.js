@@ -388,7 +388,7 @@ chatSocket.onmessage = function(e) {
             document.getElementById("toggle-screen").innerHTML = "Parar de compartilhar";
             document.getElementById("toggle-screen").classList.add('screen-on');
             document.getElementById("toggle-screen").classList.remove('camera-on');
-            srsSdk.activateScreen();
+            srsSdk.activateScreen(disableScreenShare);
         }
     });
 
