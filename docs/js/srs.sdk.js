@@ -121,13 +121,13 @@ function SrsRtcPublisherAsync() {
     self.activateCamera = async function () {
         // If screen was shared, stop all previous tracks
         self.pc.getSenders().forEach(function (sender) {
-            self.onremovetrack && self.onremovetrack({track: sender.track});
-
-            self.pc.removeTrack(sender);
-
             if (sender.track != null) {
                 sender.track.stop();
             }
+
+            self.onremovetrack && self.onremovetrack({track: sender.track});
+
+            self.pc.removeTrack(sender);
         });
 
         var cameraStream = await navigator.mediaDevices.getUserMedia(self.constraints);
@@ -144,13 +144,13 @@ function SrsRtcPublisherAsync() {
         // If camera was active, stop all video tracks
         self.pc.getSenders().forEach(function (sender) {
             if (sender.track != null && sender.track.kind == 'video') {
-                self.onremovetrack && self.onremovetrack({track: sender.track});
-
-                self.pc.removeTrack(sender);
-
                 if (sender.track != null) {
                     sender.track.stop();
                 }
+
+                self.onremovetrack && self.onremovetrack({track: sender.track});
+
+                self.pc.removeTrack(sender);
             }
         });
 
