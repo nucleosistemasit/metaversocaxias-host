@@ -68,34 +68,34 @@ function SrsRtcPublisherAsync() {
             self.ontrack && self.ontrack({track: track});
         });
 
-        var offer = await self.pc.createOffer();
-        await self.pc.setLocalDescription(offer);
-        var session = await new Promise(function (resolve, reject) {
-            // @see https://github.com/rtcdn/rtcdn-draft
-            var data = {
-                api: conf.apiUrl, tid: conf.tid, streamurl: conf.streamUrl,
-                clientip: null, sdp: offer.sdp
-            };
-            console.log("Generated offer: ", data);
+        // var offer = await self.pc.createOffer();
+        // await self.pc.setLocalDescription(offer);
+        // var session = await new Promise(function (resolve, reject) {
+        //     // @see https://github.com/rtcdn/rtcdn-draft
+        //     var data = {
+        //         api: conf.apiUrl, tid: conf.tid, streamurl: conf.streamUrl,
+        //         clientip: null, sdp: offer.sdp
+        //     };
+        //     console.log("Generated offer: ", data);
 
-            const xhr = new XMLHttpRequest();
-            xhr.onload = function() {
-                if (xhr.readyState !== xhr.DONE) return;
-                if (xhr.status !== 200) return reject(xhr);
-                const data = JSON.parse(xhr.responseText);
-                console.log("Got answer: ", data);
-                return data.code ? reject(xhr) : resolve(data);
-            }
-            xhr.open('POST', conf.apiUrl, true);
-            xhr.setRequestHeader('Content-type', 'application/json');
-            xhr.send(JSON.stringify(data));
-        });
-        await self.pc.setRemoteDescription(
-            new RTCSessionDescription({type: 'answer', sdp: session.sdp})
-        );
-        session.simulator = conf.schema + '//' + conf.urlObject.server + ':' + conf.port + '/rtc/v1/nack/';
+        //     const xhr = new XMLHttpRequest();
+        //     xhr.onload = function() {
+        //         if (xhr.readyState !== xhr.DONE) return;
+        //         if (xhr.status !== 200) return reject(xhr);
+        //         const data = JSON.parse(xhr.responseText);
+        //         console.log("Got answer: ", data);
+        //         return data.code ? reject(xhr) : resolve(data);
+        //     }
+        //     xhr.open('POST', conf.apiUrl, true);
+        //     xhr.setRequestHeader('Content-type', 'application/json');
+        //     xhr.send(JSON.stringify(data));
+        // });
+        // await self.pc.setRemoteDescription(
+        //     new RTCSessionDescription({type: 'answer', sdp: session.sdp})
+        // );
+        // session.simulator = conf.schema + '//' + conf.urlObject.server + ':' + conf.port + '/rtc/v1/nack/';
 
-        return session;
+        // return session;
     };
 
     // Close the publisher.
@@ -344,8 +344,33 @@ function SrsRtcPublisherAsync() {
 
     self.pc = new RTCPeerConnection(null);
 
-    self.pc.addEventListener('negotiationneeded', (event) => {
+    self.pc.addEventListener('negotiationneeded', async (event) => {
         console.log('negotiationneeded');
+        var offer = await self.pc.createOffer();
+        await self.pc.setLocalDescription(offer);
+        var session = await new Promise(function (resolve, reject) {
+            // @see https://github.com/rtcdn/rtcdn-draft
+            var data = {
+                api: conf.apiUrl, tid: conf.tid, streamurl: conf.streamUrl,
+                clientip: null, sdp: offer.sdp
+            };
+            console.log("Generated offer: ", data);
+
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function() {
+                if (xhr.readyState !== xhr.DONE) return;
+                if (xhr.status !== 200) return reject(xhr);
+                const data = JSON.parse(xhr.responseText);
+                console.log("Got answer: ", data);
+                return data.code ? reject(xhr) : resolve(data);
+            }
+            xhr.open('POST', conf.apiUrl, true);
+            xhr.setRequestHeader('Content-type', 'application/json');
+            xhr.send(JSON.stringify(data));
+        });
+        await self.pc.setRemoteDescription(
+            new RTCSessionDescription({type: 'answer', sdp: session.sdp})
+        );
     });
 
     // To keep api consistent between player and publisher.
