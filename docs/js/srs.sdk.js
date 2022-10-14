@@ -124,9 +124,33 @@ function SrsRtcPublisherAsync() {
     };
 
     self.activateCamera = async function () {
-        // If screen was shared, stop audio tracks
+        // If screen was shared, stop all previous tracks
         self.pc.getSenders().forEach(function (sender) {
-            if (sender.track != null && sender.track.kind == 'audio') {
+            if (sender.track != null) {
+                sender.track.stop();
+            }
+
+            self.onremovetrack && self.onremovetrack({track: sender.track});
+
+            self.pc.removeTrack(sender);
+        });
+
+        var cameraStream = await navigator.mediaDevices.getUserMedia(self.constraints);
+
+        // Add all tracks again from user media (camera)
+        cameraStream.getTracks().forEach(function (track) {
+            self.pc.addTrack(track);
+
+            self.ontrack && self.ontrack({track: track});
+        });
+
+        await self.negotiateConnection();
+    };
+
+    self.activateScreen = async function (browserCallback) {
+        // If camera was active, stop all video tracks
+        self.pc.getSenders().forEach(function (sender) {
+            if (sender.track != null && sender.track.kind == 'video') {
                 if (sender.track != null) {
                     sender.track.stop();
                 }
@@ -137,68 +161,23 @@ function SrsRtcPublisherAsync() {
             }
         });
 
-        var cameraStream = await navigator.mediaDevices.getUserMedia(self.constraints);
-
-        // Replace video tracks - local stream
-        self.stream.getVideoTracks().forEach(function (track) {
-            self.onremovetrack && self.onremovetrack({track: track});
-        });
-        cameraStream.getVideoTracks().forEach(function (track) {
-            self.ontrack && self.ontrack({track: track});
-        });
-
-        // Replace video tracks - remote stream
-        self.pc.getSenders().forEach(function (sender) {
-            if (sender.track != null && sender.track.kind == 'video') {
-                sender.replaceTrack(cameraStream.getVideoTracks()[0]);
-            }
-        });
-    };
-
-    self.activateScreen = async function (browserCallback) {
-        // If camera was active, stop all video tracks
-        // self.pc.getSenders().forEach(function (sender) {
-        //     if (sender.track != null && sender.track.kind == 'video') {
-        //         if (sender.track != null) {
-        //             sender.track.stop();
-        //         }
-
-        //         self.onremovetrack && self.onremovetrack({track: sender.track});
-
-        //         self.pc.removeTrack(sender);
-        //     }
-        // });
-
         var screenStream = await navigator.mediaDevices.getDisplayMedia({video: {cursor: 'always'}, audio: true});
 
-        // Replace video tracks and add audio tracks - local stream
-        self.stream.getVideoTracks().forEach(function (track) {
-            self.onremovetrack && self.onremovetrack({track: track});
-        });
+        // Add all tracks from display media (audio and video)
         screenStream.getTracks().forEach(function (track) {
-            self.ontrack && self.ontrack({track: track});
-        });
+            self.pc.addTrack(track);
 
-        // Replace video tracks - remote stream
-        self.pc.getSenders().forEach(function (sender) {
-            if (sender.track != null && sender.track.kind == 'video') {
-                sender.replaceTrack(screenStream.getVideoTracks()[0]);
+            self.ontrack && self.ontrack({track: track});
+
+            // Add listener for browser UI stop button
+            if (track.kind == 'video') {
+                track.addEventListener('ended', () => {
+                    browserCallback();
+                });
             }
         });
 
-        // Add all tracks from display media (audio and video)
-        // screenStream.getTracks().forEach(function (track) {
-        //     self.pc.addTrack(track);
-
-        //     self.ontrack && self.ontrack({track: track});
-
-        //     // Add listener for browser UI stop button
-        //     if (track.kind == 'video') {
-        //         track.addEventListener('ended', () => {
-        //             browserCallback();
-        //         });
-        //     }
-        // });
+        await self.negotiateConnection();
     };
 
     // Internal APIs.
