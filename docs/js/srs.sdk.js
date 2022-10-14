@@ -344,6 +344,10 @@ function SrsRtcPublisherAsync() {
 
     self.pc = new RTCPeerConnection(null);
 
+    self.pc.addEventListener('negotiationneeded', (event) => {
+        console.log('negotiationneeded');
+    });
+
     // To keep api consistent between player and publisher.
     // @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/addStream#Migrating_to_addTrack
     // @see https://webrtc.org/getting-started/media-devices
