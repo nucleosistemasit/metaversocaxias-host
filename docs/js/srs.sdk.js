@@ -49,7 +49,7 @@ function SrsRtcPublisherAsync() {
     //      webrtc://r.ossrs.net/live/livestream?vhost=xxx
     //      webrtc://r.ossrs.net/live/livestream?token=xxx
     self.publish = async function (url) {
-        var conf = self.__internal.prepareUrl(url);
+        self.url = url;
         self.pc.addTransceiver("audio", {direction: "sendonly"});
         self.pc.addTransceiver("video", {direction: "sendonly"});
         //self.pc.addTransceiver("video", {direction: "sendonly"});
@@ -346,6 +346,7 @@ function SrsRtcPublisherAsync() {
 
     self.pc.addEventListener('negotiationneeded', async (event) => {
         console.log('negotiationneeded');
+        var conf = self.__internal.prepareUrl(self.url);
         var offer = await self.pc.createOffer();
         await self.pc.setLocalDescription(offer);
         var session = await new Promise(function (resolve, reject) {
