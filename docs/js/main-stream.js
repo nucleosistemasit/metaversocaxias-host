@@ -92,9 +92,8 @@ function publishSrs() {
     document.getElementById("rtc_media_player").srcObject = srsSdk.stream;
 
     var url = 'https://metaversoaudio.youbot.us/live/livestream';
-    srsSdk.publish(url).then(function() {
-        console.log('Conectado');
-        // console.log('Conectado', session.sessionid);
+    srsSdk.publish(url).then(function(session) {
+        console.log('Conectado', session.sessionid);
     }).catch(function (reason) {
         // Throw by sdk.
         if (reason instanceof SrsError) {
