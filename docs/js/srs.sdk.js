@@ -124,7 +124,7 @@ function SrsRtcPublisherAsync() {
     };
 
     self.activateCamera = async function () {
-        // If screen was shared, stop all previous tracks
+        // Stop all previous tracks
         self.pc.getSenders().forEach(function (sender) {
             if (sender.track != null) {
                 sender.track.stop();
@@ -134,6 +134,13 @@ function SrsRtcPublisherAsync() {
 
             self.pc.removeTrack(sender);
         });
+
+        // Stop connection
+        self.close();
+
+        self.pc = new RTCPeerConnection(null);
+        self.pc.addTransceiver("audio", {direction: "sendonly"});
+        self.pc.addTransceiver("video", {direction: "sendonly"});
 
         var cameraStream = await navigator.mediaDevices.getUserMedia(self.constraints);
 
@@ -148,20 +155,33 @@ function SrsRtcPublisherAsync() {
     };
 
     self.activateScreen = async function (browserCallback) {
-        // If camera was active, stop all video tracks
+        // Stop all previous tracks
         self.pc.getSenders().forEach(function (sender) {
-            if (sender.track != null && sender.track.kind == 'video') {
-                if (sender.track != null) {
-                    sender.track.stop();
-                }
-
-                self.onremovetrack && self.onremovetrack({track: sender.track});
-
-                self.pc.removeTrack(sender);
+            if (sender.track != null) {
+                sender.track.stop();
             }
+
+            self.onremovetrack && self.onremovetrack({track: sender.track});
+
+            self.pc.removeTrack(sender);
         });
 
+        // Stop connection
+        self.close();
+
+        self.pc = new RTCPeerConnection(null);
+        self.pc.addTransceiver("audio", {direction: "sendonly"});
+        self.pc.addTransceiver("video", {direction: "sendonly"});
+
         var screenStream = await navigator.mediaDevices.getDisplayMedia({video: {cursor: 'always'}, audio: true});
+        var micStream = await navigator.mediaDevices.getUserMedia({audio: true});
+
+        // Add mic tracks from user media (audio)
+        micStream.getTracks().forEach(function (track) {
+            self.pc.addTrack(track);
+
+            self.ontrack && self.ontrack({track: track});
+        });
 
         // Add all tracks from display media (audio and video)
         screenStream.getTracks().forEach(function (track) {
