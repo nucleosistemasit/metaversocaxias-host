@@ -171,10 +171,9 @@ function SrsRtcPublisherAsync() {
 
         self.pc = new RTCPeerConnection(null);
         self.pc.addTransceiver("audio", {direction: "sendonly"});
-        self.pc.addTransceiver("audio", {direction: "sendonly"});
         self.pc.addTransceiver("video", {direction: "sendonly"});
 
-        var screenStream = await navigator.mediaDevices.getDisplayMedia({video: {cursor: 'always'}, audio: true});
+        var screenStream = await navigator.mediaDevices.getDisplayMedia({video: {cursor: 'always'}});
         var micStream = await navigator.mediaDevices.getUserMedia({audio: true});
 
         // Add mic tracks from user media (audio)
