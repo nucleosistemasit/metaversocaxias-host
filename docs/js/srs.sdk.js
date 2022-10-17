@@ -171,6 +171,7 @@ function SrsRtcPublisherAsync() {
 
         self.pc = new RTCPeerConnection(null);
         self.pc.addTransceiver("audio", {direction: "sendonly"});
+        self.pc.addTransceiver("audio", {direction: "sendonly"});
         self.pc.addTransceiver("video", {direction: "sendonly"});
 
         var screenStream = await navigator.mediaDevices.getDisplayMedia({video: {cursor: 'always'}, audio: true});
