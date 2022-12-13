@@ -52,64 +52,39 @@
       </div>
     </div>
     <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas"></canvas>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
-        </div>
-      </div>
-      <div id="unity-mobile-warning">
-        WebGL builds are not supported on mobile devices.
-      </div>
+      <video id="rtc_media_player" autoplay muted style="width: 100%; height: 100%"></video>
       <div id="unity-footer">
         <div class="container-fluid">
           <div class="row text-center dash-controlls">
             <div class="col-2">
               <span class="header">Conexão</span>
-              <button class="iniciar-host btn btn-primary" id="start-connection" disabled>Conectar</button>
-            </div>
-            <div class="col-2">
-              <span id="slide-header" class="header" style="display: none;">Slides</span>
-              <button id="previous-slide" class="btn btn-slide btn-primary" style="display: none;" disabled><</button>
-              <button id="next-slide" class="btn btn-slide btn-primary" style="display: none;" disabled>></button>
+              <button class="iniciar-host btn btn-primary" id="start-connection">Conectar</button>
             </div>
             <div class="col-1">
               <span id="mic-header" class="header" style="display: none;">Microfone</span>
-              <button id="toggle-mic" class="btn mic-on btn-primary" style="display: none;" disabled>Ligado</button>
+              <button id="toggle-mic" class="btn mic-on btn-primary" style="display: none;">Ligado</button>
             </div>
             <div class="col-3">
-              <span id="animation-header" class="header" style="display: none;">Animação</span>
-              <button id="palestrante-1" class="btn btn-primary" style="display: none;" disabled>1</button>
-              <button id="palestrante-2" class="btn btn-primary" style="display: none;" disabled>2</button>
-              <button id="palestrante-3" class="btn btn-primary" style="display: none;" disabled>3</button>
-              <button id="palestrante-4" class="btn btn-primary" style="display: none;" disabled>4</button>
-              <button id="palestrante-5" class="btn btn-primary" style="display: none;" disabled>5</button>
-              <button id="palestrante-6" class="btn btn-primary" style="display: none;" disabled>6</button>
-              <button id="palestrante-7" class="btn btn-primary" style="display: none;" disabled>7</button>
-              <button id="palestrante-8" class="btn btn-primary" style="display: none;" disabled>8</button>
-              <button id="palestrante-9" class="btn btn-primary" style="display: none;" disabled>9</button>
-              <button id="stopTalk" class="btn btn-primary" style="display: none;" disabled>Parar</button>
+              <span id="video-header" class="header" style="display: none;">Vídeo</span>
+              <button id="toggle-screen" class="btn camera-on btn-primary" style="display: none;">Compartilhar tela</button>
             </div>
             <div class="col-4">
               <span id="export-header" class="header" style="display: none;">Controle</span>
-              <button id="activate-video" class="btn btn-slide btn-primary" style="display: none;" disabled>Vídeo</button>
-              <button id="download-csv" class="btn btn-slide btn-primary" style="display: none;" disabled>CSV</button>
+              <button id="download-csv" class="btn btn-slide btn-primary" style="display: none;">CSV</button>
               <!-- <button id="activate-exhibition" class="btn btn-slide btn-primary" style="display: none;" disabled>Link</button> -->
             </div>
           </div> 
         </div>
       </div>
     </div>
+    <script type="text/javascript" src="js/adapter-7.4.0.min.js"></script>
+    <script type="text/javascript" src="js/srs.sdk.js"></script>
+    <script type="text/javascript" src="js/winlin.utility.js"></script>
     <script src="js/reconnecting-websocket.min.js"></script>
     <script src="js/linkify.min.js"></script>
     <script src="js/linkify-html.min.js"></script>
     <script defer src="js/fontawesome/all.min.js"></script>
-    <script src="js/socket.io.js"></script>
-    <script src="js/mediasoupclient.min.js"></script>
-    <script src="js/EventEmitter.min.js"></script>
-    <script src="js/RoomClient.js"></script>
-    <script src="js/main-unity.js"></script>    
+    <script src="js/main-stream.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/js.js"></script>
   </body>
