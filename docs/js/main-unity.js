@@ -71,7 +71,7 @@ script.onload = () => {
         document.getElementById("palestrante-1").disabled = false;
         document.getElementById("palestrante-2").disabled = false;
         document.getElementById("palestrante-3").disabled = false;
-//         document.getElementById("palestrante-4").disabled = false;
+        document.getElementById("palestrante-4").disabled = false;
 //         document.getElementById("palestrante-5").disabled = false;
 //         document.getElementById("palestrante-6").disabled = false;
 //         document.getElementById("palestrante-7").disabled = false;
@@ -407,7 +407,7 @@ chatSocket.onmessage = function(e) {
             document.getElementById("palestrante-1").style.display = '';
             document.getElementById("palestrante-2").style.display = '';
             document.getElementById("palestrante-3").style.display = '';
-//             document.getElementById("palestrante-4").style.display = '';
+            document.getElementById("palestrante-4").style.display = '';
 //             document.getElementById("palestrante-5").style.display = '';
 //             document.getElementById("palestrante-6").style.display = '';
 //             document.getElementById("palestrante-7").style.display = '';
@@ -512,7 +512,7 @@ chatSocket.onmessage = function(e) {
     const palestrante1 = document.getElementById("palestrante-1");
     const palestrante2 = document.getElementById("palestrante-2");
     const palestrante3 = document.getElementById("palestrante-3");
-//     const palestrante4 = document.getElementById("palestrante-4");
+    const palestrante4 = document.getElementById("palestrante-4");
 //     const palestrante5 = document.getElementById("palestrante-5");
 //     const palestrante6 = document.getElementById("palestrante-6");
 //     const palestrante7 = document.getElementById("palestrante-7");
@@ -561,17 +561,17 @@ chatSocket.onmessage = function(e) {
         }
     });
 
-//     palestrante4.addEventListener("click", function() {
-//         let elementIndex = hostIndex.indexOf(3);
-//         if (elementIndex === -1) {
-//             hostIndex.push(3);
-//             chatSocket.send(JSON.stringify({"command": "control", content: 3, name: 'avatarTalking'}));
-//         }
-//         else {
-//             hostIndex.splice(elementIndex, 1);
-//             chatSocket.send(JSON.stringify({"command": "control", content: 3, name: 'avatarIdle'}));
-//         }
-//     });
+    palestrante4.addEventListener("click", function() {
+        let elementIndex = hostIndex.indexOf(3);
+        if (elementIndex === -1) {
+            hostIndex.push(3);
+            chatSocket.send(JSON.stringify({"command": "control", content: 3, name: 'avatarTalking'}));
+        }
+        else {
+            hostIndex.splice(elementIndex, 1);
+            chatSocket.send(JSON.stringify({"command": "control", content: 3, name: 'avatarIdle'}));
+        }
+    });
 
 //     palestrante5.addEventListener("click", function() {
 //         let elementIndex = hostIndex.indexOf(4);
